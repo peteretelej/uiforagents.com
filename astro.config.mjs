@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   output: "static",
   markdown: {
-    // Dual Shiki themes; dark directions flip via a generated style in the layout.
+    // Dual Shiki themes; dark directions flip via the layout's switcher script.
     shikiConfig: { themes: { light: "github-light", dark: "github-dark" } },
   },
 });

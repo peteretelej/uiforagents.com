@@ -127,6 +127,43 @@ const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", "
       // dist` runs, and Vite's preload wrapping breaks inlined scripts.
       const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[ch]);
 
+      // Shiki dual themes: code blocks inline both palettes - light values as
+      // plain properties, dark values as --shiki-dark* custom properties.
+      // Swap them per element inside dark directions (keep the slug list in
+      // sync with the vendored directions.mjs: midnight, terracotta-night,
+      // blueprint). Not a CSS rule because these tokens are Shiki-injected,
+      // not project vocabulary.
+      const darkDirections = new Set(["midnight", "terracotta-night", "blueprint"]);
+      const shikiFlips = [
+        ["color", "--shiki-dark"],
+        ["background-color", "--shiki-dark-bg"],
+        ["font-style", "--shiki-dark-font-style"],
+        ["font-weight", "--shiki-dark-font-weight"],
+        ["text-decoration", "--shiki-dark-text-decoration"],
+      ];
+      const codeOriginals = new WeakMap();
+      const flipCode = (dark) => {
+        for (const el of document.querySelectorAll(".astro-code, .astro-code span")) {
+          for (const [prop, token] of shikiFlips) {
+            const darkValue = el.style.getPropertyValue(token);
+            if (!darkValue) continue;
+            if (dark) {
+              let saved = codeOriginals.get(el);
+              if (!saved) codeOriginals.set(el, (saved = {}));
+              if (!(prop in saved)) saved[prop] = el.style.getPropertyValue(prop);
+              el.style.setProperty(prop, darkValue);
+            } else {
+              const saved = codeOriginals.get(el);
+              if (saved && prop in saved) {
+                if (saved[prop]) el.style.setProperty(prop, saved[prop]);
+                else el.style.removeProperty(prop);
+                delete saved[prop];
+              }
+            }
+          }
+        }
+      };
+
       // Direction switcher: the pre-paint script already applied the
       // persisted choice; here we keep the control and future picks in sync.
       const switcher = document.querySelector("[data-direction-switcher]");
@@ -137,6 +174,7 @@ const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", "
         for (const marker of document.querySelectorAll("[data-direction-state]")) {
           marker.textContent = marker.getAttribute("data-direction-state") === slug ? "current" : "";
         }
+        flipCode(darkDirections.has(slug));
       };
       if (switcher) {
         switcher.value = document.documentElement.dataset.theme;
@@ -149,6 +187,7 @@ const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", "
         marker.textContent =
           marker.getAttribute("data-direction-state") === document.documentElement.dataset.theme ? "current" : "";
       }
+      flipCode(darkDirections.has(document.documentElement.dataset.theme));
 
       // Pagefind search; the index exists only after a full build.
       let pagefind = null;
