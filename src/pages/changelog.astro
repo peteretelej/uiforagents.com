@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import { loadChangelog, loadLlmsGroups } from "../lib/kit.mjs";
+
+const changelog = loadChangelog().slice().reverse();
+const titles = new Map(loadLlmsGroups().flatMap((g) => g.items).map((item) => [item.name, item.title]));
+---
+<Base title="Changelog - uiforagents">
+  <div class="page">
+    <header class="page-head">
+      <h1>Changelog</h1>
+      <p>Kit releases from the package's changelog, newest first. Every gap this site exposed landed
+      kit-first as a 0.0.x release before the site consumed it.</p>
+    </header>
+    <div class="changelog">
+      {changelog.map((release) => (
+        <article class="changelog-entry">
+          <h2>v{release.version} <time datetime={release.date}>{release.date}</time></h2>
+          <ul class="changelog-items">
+            {release.items.map((name) => (
+              <li><a class="uif-chip" href={`/components/${name}/`}>{titles.get(name) ?? name}</a></li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</Base>

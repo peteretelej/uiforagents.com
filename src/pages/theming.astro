@@ -1,0 +1,57 @@
+---
+import Base from "../layouts/Base.astro";
+import { directions } from "../../directions.mjs";
+
+const swatchRoles = ["--bg", "--surface", "--border", "--accent", "--ok", "--warn", "--danger"];
+const switcherSample = `const slugs = [${directions.map((d) => JSON.stringify(d.slug)).join(", ")}];
+const saved = localStorage.getItem("uiforagents-direction");
+document.documentElement.dataset.theme = slugs.includes(saved) ? saved : "midnight";
+const switcher = document.querySelector("[data-direction-switcher]");
+switcher.value = document.documentElement.dataset.theme;
+switcher.addEventListener("change", () => {
+  document.documentElement.dataset.theme = switcher.value;
+  localStorage.setItem("uiforagents-direction", switcher.value);
+});`;
+---
+<Base title="Theming - uiforagents">
+  <div class="page">
+    <header class="page-head">
+      <h1>Theming</h1>
+      <p>The kit's components read semantic roles - <code>--bg</code>, <code>--surface</code>, <code>--accent</code>, status triplets - never colors. A <strong>direction</strong> is a complete token set for those roles: palette, radius, shadow character, type pairing, density. Swap the direction and every component restyles, with no per-component overrides anywhere.</p>
+    </header>
+
+    <section class="catalog-section">
+      <h2>How it works</h2>
+      <p>The site ships tokens.css with all {directions.length} directions bundled: a <code>:root</code> fallback plus one <code>[data-theme]</code> block per direction. The switcher script applies your persisted choice to <code>document.documentElement.dataset.theme</code> before first paint, so there is no flash and no server state - one vanilla recipe, ~10 lines.</p>
+      <div class="uif-code-block">
+        <div data-slot="header">
+          <span data-slot="label">switcher.js</span>
+          <button type="button" data-slot="copy">Copy</button>
+        </div>
+        <pre data-slot="code"><code>{switcherSample}</code></pre>
+      </div>
+    </section>
+
+    <section class="catalog-section">
+      <h2>The directions</h2>
+      <p>Curated in the lab's direction library and sampled side by side before this site picked its
+      default (<strong>Midnight</strong>). Click a card to apply it site-wide; the switcher keeps it.</p>
+      <div class="direction-grid">
+        {directions.map((d) => (
+          <button type="button" class="direction-card" data-apply-direction={d.slug} aria-label={`Apply the ${d.name} direction`}>
+            <span class="direction-swatches">
+              {swatchRoles.map((role) => (
+                <span style={`background: ${d.tokens[role]};`}></span>
+              ))}
+            </span>
+            <span class="direction-card-body">
+              <h2>{d.name}</h2>
+              <p>{d.mood} · {d.notes}</p>
+              <span class="direction-state" data-direction-state={d.slug}></span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

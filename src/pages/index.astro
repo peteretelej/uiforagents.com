@@ -1,0 +1,110 @@
+---
+import Base from "../layouts/Base.astro";
+import ItemExample from "../components/ItemExample.astro";
+---
+
+<Base>
+  <div class="landing">
+    <section class="hero">
+      <p class="kicker">uiforagents</p>
+      <h1>Agent-first UI components. Vanilla HTML/CSS. Any direction.</h1>
+      <p class="sub">
+        A registry-shaped kit of copy-in components with zero runtime dependencies. Agents read the
+        registry and ship the UI; humans review and own the output. Every sample on this page is the
+        kit, live - restyle the whole site with the direction switcher.
+      </p>
+      <div class="cta-row">
+        <a class="uif-button" data-variant="primary" href="/quickstart/">Quickstart</a>
+        <a class="uif-button" data-variant="secondary" href="/catalog/">Browse the catalog</a>
+      </div>
+    </section>
+
+    <section class="hero-grid">
+      <ul class="pitch-list">
+        <li>
+          <h2>Registry-shaped</h2>
+          <p>Every component is an index line in <a href="/llms.txt">llms.txt</a>, a validated manifest, and
+          machine-readable docs. An agent picks a component and variant without opening a single file.</p>
+        </li>
+        <li>
+          <h2>Themed by tokens</h2>
+          <p>Components read semantic roles - never colors - so one direction token set restyles the whole
+          kit. Try it: the switcher up top re-skins every sample on this site in place.</p>
+        </li>
+        <li>
+          <h2>Zero runtime dependencies</h2>
+          <p>The components are just files: markup, CSS, and a script when behavior calls for it. No
+          framework, no build step, nothing to audit but your own repo.</p>
+        </li>
+      </ul>
+      <div class="uif-code-block">
+        <div data-slot="header">
+          <span data-slot="label">setup.sh</span>
+          <button type="button" data-slot="copy">Copy</button>
+        </div>
+        <pre data-slot="code"><code># clone the kit next to your project
+git clone https://github.com/peteretelej/uiforagents
+node uiforagents/scripts/uifa.mjs add
+node uiforagents/validation/check.mjs</code></pre>
+      </div>
+    </section>
+
+    <section class="samples">
+      <h2>Live samples</h2>
+      <div class="sample-grid">
+        <div class="sample-cell">
+          <h3>button</h3>
+          <div class="sample-row">
+            <button class="uif-button" data-variant="primary">Deploy</button>
+            <button class="uif-button" data-variant="secondary">Preview</button>
+            <button class="uif-button" data-variant="small">Copy link</button>
+            <button class="uif-button" data-variant="danger">Delete</button>
+          </div>
+        </div>
+        <div class="sample-cell">
+          <h3>badge + chip</h3>
+          <div class="sample-row">
+            <span class="uif-badge" data-variant="ok">Passing</span>
+            <span class="uif-badge" data-variant="warn">Degraded</span>
+            <span class="uif-badge" data-variant="danger">Down</span>
+            <span class="uif-chip" data-variant="accent">v0.0.8</span>
+            <span class="uif-chip">vanilla</span>
+          </div>
+        </div>
+        <div class="sample-cell">
+          <h3>form-field + toggle</h3>
+          <label class="uif-field">
+            <span data-slot="label">Workspace name</span>
+            <input class="uif-field-input" type="text" placeholder="Acme Inc" />
+          </label>
+          <label class="uif-toggle">
+            <input class="uif-toggle-input" type="checkbox" role="switch" checked />
+            <span data-slot="label">Ship tokens with the bundle</span>
+          </label>
+        </div>
+        <div class="sample-cell">
+          <h3>segmented-control</h3>
+          <div class="uif-segmented" role="radiogroup" aria-label="Interval">
+            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="day" checked /><span data-slot="segment">Day</span></label>
+            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="week" /><span data-slot="segment">Week</span></label>
+            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="month" /><span data-slot="segment">Month</span></label>
+          </div>
+        </div>
+        <div class="sample-cell">
+          <h3>toast</h3>
+          <ItemExample name="toast" />
+        </div>
+        <div class="sample-cell">
+          <h3>card</h3>
+          <article class="uif-card">
+            <h3 data-slot="title">On-system output</h3>
+            <p data-slot="body">Every color, radius, and shadow above comes from one direction token set. Switch the direction and the card restyles with it.</p>
+            <div data-slot="actions">
+              <span class="uif-badge" data-variant="ok">contrast-checked</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,32 @@
+{
+  "kit": "../uiforagents",
+  "direction": "all",
+  "directionsFile": "directions.mjs",
+  "items": [
+    "button",
+    "filter-bar",
+    "form-field",
+    "segmented-control",
+    "toggle",
+    "badge",
+    "card",
+    "chip",
+    "code-block",
+    "link-row",
+    "dead-states",
+    "toast",
+    "footer",
+    "sidebar",
+    "tabs",
+    "top-nav",
+    "data-table",
+    "modal",
+    "audio-player"
+  ],
+  "dest": {
+    "itemsDir": "src/ui",
+    "tokensCss": "src/styles/tokens.css",
+    "docs": "docs/design-system.md"
+  },
+  "lint": ["src/ui/**/*.html", "src/ui/**/*.css", "src/styles/**/*.css"]
+}

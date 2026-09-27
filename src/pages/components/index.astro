@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { loadLlmsGroups } from "../../lib/kit.mjs";
+
+const groups = loadLlmsGroups();
+const entries = await getCollection("components");
+const count = groups.reduce((sum, g) => sum + g.items.length, 0);
+---
+<Base title="Components - uiforagents">
+  <div class="page">
+    <header class="page-head">
+      <h1>Components</h1>
+      <p>All {count} items in the kit registry, grouped by category. Each page pairs the generated agent-facing docs with a live, direction-aware example. Index lines come from <a href="/llms.txt">llms.txt</a>, the way an agent reads the kit.</p>
+    </header>
+    {groups.map((group) => (
+      <section class="catalog-section">
+        <h2 style={`text-transform: capitalize;`}>{group.category}</h2>
+        <div class="component-grid">
+          {group.items.map((item) => (
+            <article class="uif-card">
+              <h3 data-slot="title"><a href={`/components/${item.name}/`}>{item.title}</a></h3>
+              <p data-slot="body">{item.description}</p>
+              <div data-slot="actions" class="component-meta">
+                <span class="uif-chip">{item.name}</span>
+                {item.behavior !== "none" && <span class="uif-chip" data-variant="accent">{item.behavior}</span>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>

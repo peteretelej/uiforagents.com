@@ -1,0 +1,203 @@
+---
+// Site chrome: tokens, all kit item styles, fonts for the vendored
+// directions, the pre-paint direction switcher, search, and the footer.
+import { readFileSync } from "node:fs";
+import { directions } from "../../directions.mjs";
+import "../styles/tokens.css";
+import "../styles/site.css";
+// Item styles: the full kit set copied by `uifa add` (keep in sync with
+// uiforagents.json items).
+import "../ui/audio-player/audio-player.css";
+import "../ui/badge/badge.css";
+import "../ui/button/button.css";
+import "../ui/card/card.css";
+import "../ui/chip/chip.css";
+import "../ui/code-block/code-block.css";
+import "../ui/data-table/data-table.css";
+import "../ui/dead-states/dead-states.css";
+import "../ui/filter-bar/filter-bar.css";
+import "../ui/footer/footer.css";
+import "../ui/form-field/form-field.css";
+import "../ui/link-row/link-row.css";
+import "../ui/modal/modal.css";
+import "../ui/segmented-control/segmented-control.css";
+import "../ui/sidebar/sidebar.css";
+import "../ui/tabs/tabs.css";
+import "../ui/toast/toast.css";
+import "../ui/toggle/toggle.css";
+import "../ui/top-nav/top-nav.css";
+
+const {
+  title = "uiforagents - agent-first vanilla UI kit",
+  description = "Registry-shaped, copy-in vanilla HTML/CSS/JS components with zero runtime dependencies. The primary consumer is the AI agent building the UI; humans review and own the output.",
+} = Astro.props;
+
+const DEFAULT_DIRECTION = "midnight";
+const slugs = directions.map((d) => d.slug);
+
+const path = Astro.url.pathname.replace(/\/+$/, "") + "/";
+const navLinks = [
+  { href: "/components/", label: "Components" },
+  { href: "/catalog/", label: "Catalog" },
+  { href: "/theming/", label: "Theming" },
+  { href: "/quickstart/", label: "Quickstart" },
+  { href: "/changelog/", label: "Changelog" },
+];
+const isActive = (href) => path === href || path.startsWith(href);
+const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[ch]);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- The union of families the vendored directions use; browsers fetch
+         per-direction faces only when a direction renders text in them. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Barlow+Condensed:wght@400;600&family=Fraunces:opsz,wght@9..144,300..900&family=Inter:wght@400;600;700&family=Lilita+One&family=Oswald:wght@400;600&display=swap"
+    />
+    <script define:vars={{ slugs, defaultDirection: DEFAULT_DIRECTION }}>
+      // Persisted direction, applied before first paint (kit recipe, with a
+      // stale-slug guard so unknown saved values fall back to the default).
+      const saved = localStorage.getItem("uiforagents-direction");
+      document.documentElement.dataset.theme = slugs.includes(saved) ? saved : defaultDirection;
+    </script>
+  </head>
+  <body>
+    <div class="site-nav">
+      <header class="uif-top-nav">
+        <a data-slot="wordmark" href="/">uiforagents</a>
+        <nav data-slot="links" aria-label="Main">
+          {navLinks.map((link) => (
+            <a href={link.href} aria-current={isActive(link.href) ? "page" : undefined}>{link.label}</a>
+          ))}
+        </nav>
+        <div data-slot="actions" class="site-nav-tools">
+          <div class="search">
+            <input data-search-input type="search" placeholder="Search" aria-label="Search the site" autocomplete="off" />
+            <div class="search-panel" data-search-panel hidden></div>
+          </div>
+          <label class="direction-select">
+            <span class="visually-hidden">Direction</span>
+            <select data-direction-switcher aria-label="Color direction">
+              {directions.map((d) => (
+                <option value={d.slug}>{d.name}</option>
+              ))}
+            </select>
+          </label>
+          <a href="https://github.com/peteretelej/uiforagents">GitHub</a>
+        </div>
+      </header>
+    </div>
+    <main class="site-main">
+      <slot />
+    </main>
+    <div class="site-footer">
+      <footer class="uif-footer">
+        <div data-slot="brand">
+          <a data-slot="wordmark" href="/">uiforagents</a>
+          <p data-slot="note">Agent-first vanilla UI kit. Copy-in HTML/CSS/JS, zero runtime dependencies, themed entirely by direction tokens.</p>
+        </div>
+        <nav data-slot="group" aria-label="Site">
+          <span data-slot="heading">Site</span>
+          <a data-slot="link" href="/components/">Components</a>
+          <a data-slot="link" href="/catalog/">Catalog</a>
+          <a data-slot="link" href="/theming/">Theming</a>
+          <a data-slot="link" href="/quickstart/">Quickstart</a>
+          <a data-slot="link" href="/changelog/">Changelog</a>
+        </nav>
+        <nav data-slot="group" aria-label="Agents">
+          <span data-slot="heading">Agents</span>
+          <a data-slot="link" href="/llms.txt">llms.txt</a>
+          <a data-slot="link" href="/schema/registry.schema.json">Registry schema</a>
+          <a data-slot="link" href="https://github.com/peteretelej/uiforagents/blob/main/SKILL.md">SKILL.md</a>
+        </nav>
+        <p data-slot="legal">© 2026 Peter Etelej. Apache-2.0.</p>
+      </footer>
+    </div>
+    <script type="module" is:inline>
+      // Emitted verbatim (is:inline): the pagefind import must not pass
+      // through the bundler - the module only exists after `pagefind --site
+      // dist` runs, and Vite's preload wrapping breaks inlined scripts.
+      const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[ch]);
+
+      // Direction switcher: the pre-paint script already applied the
+      // persisted choice; here we keep the control and future picks in sync.
+      const switcher = document.querySelector("[data-direction-switcher]");
+      const apply = (slug) => {
+        document.documentElement.dataset.theme = slug;
+        localStorage.setItem("uiforagents-direction", slug);
+        if (switcher) switcher.value = slug;
+        for (const marker of document.querySelectorAll("[data-direction-state]")) {
+          marker.textContent = marker.getAttribute("data-direction-state") === slug ? "current" : "";
+        }
+      };
+      if (switcher) {
+        switcher.value = document.documentElement.dataset.theme;
+        switcher.addEventListener("change", () => apply(switcher.value));
+      }
+      for (const card of document.querySelectorAll("[data-apply-direction]")) {
+        card.addEventListener("click", () => apply(card.getAttribute("data-apply-direction")));
+      }
+      for (const marker of document.querySelectorAll("[data-direction-state]")) {
+        marker.textContent =
+          marker.getAttribute("data-direction-state") === document.documentElement.dataset.theme ? "current" : "";
+      }
+
+      // Pagefind search; the index exists only after a full build.
+      let pagefind = null;
+      try {
+        pagefind = await import("/pagefind/pagefind.js");
+      } catch {
+        // Dev server: no index yet; the input stays inert.
+      }
+      const input = document.querySelector("[data-search-input]");
+      const panel = document.querySelector("[data-search-panel]");
+      if (pagefind && input && panel) {
+        let timer;
+        let inFlight = 0;
+        const close = () => {
+          panel.hidden = true;
+        };
+        input.addEventListener("input", () => {
+          clearTimeout(timer);
+          timer = setTimeout(async () => {
+            const query = input.value.trim();
+            const ticket = ++inFlight;
+            if (!query) {
+              close();
+              return;
+            }
+            const search = await pagefind.search(query);
+            const hits = await Promise.all(search.results.slice(0, 8).map((r) => r.data()));
+            if (ticket !== inFlight) return;
+            panel.innerHTML = hits.length
+              ? hits
+                  .map(
+                    (h) =>
+                      `<a class="search-hit" href="${h.url}"><span class="search-hit-title">${escapeHtml(h.meta?.title ?? h.url)}</span><span class="search-hit-excerpt">${h.excerpt}</span></a>`
+                  )
+                  .join("")
+              : `<p class="search-empty">No results for "${escapeHtml(query)}"</p>`;
+            panel.hidden = false;
+          }, 120);
+        });
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            close();
+            input.blur();
+          }
+        });
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".search")) close();
+        });
+      }
+    </script>
+  </body>
+</html>

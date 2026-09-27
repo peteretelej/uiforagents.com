@@ -1,0 +1,46 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Quickstart - uiforagents">
+  <div class="page">
+    <header class="page-head">
+      <h1>Quickstart</h1>
+      <p>The kit is copy-in vanilla HTML/CSS/JS: no framework requirement, no build step, no runtime
+      dependencies. Start from the registry, not a docs search.</p>
+    </header>
+
+    <div class="quickstart-grid">
+      <section class="quickstart-col">
+        <h2>For agents</h2>
+        <p>Point your agent at the published surfaces; they mirror the kit package one-to-one.</p>
+        <ul>
+          <li><a href="/llms.txt"><code>llms.txt</code></a> - one line per component: description, closed variant table, behavior. Enough to pick without opening files.</li>
+          <li><a href="/schema/registry.schema.json"><code>registry.schema.json</code></a> - the manifest contract every item validates against.</li>
+          <li><a href="/docs/components/button.md"><code>docs/components/&lt;name&gt;.md</code></a> - generated docs twins with markup, tokens read, and validation steps.</li>
+          <li><a href="/items/button/button.html"><code>items/&lt;name&gt;/</code></a> - the item sources the index lines reference: markup, CSS, script, example, ARIA fixture.</li>
+          <li><a href="https://github.com/peteretelej/uiforagents/blob/main/SKILL.md"><code>SKILL.md</code></a> - the full adapter: workflow, variant API, token vocabulary.</li>
+        </ul>
+        <p>The loop: read <code>llms.txt</code>, pick a component and variant, copy the item's files,
+        wire tokens, then validate the render against the item's <code>fixture.aria.yml</code> with
+        Playwright's ariaSnapshot.</p>
+      </section>
+
+      <section class="quickstart-col">
+        <h2>For humans (and their agents)</h2>
+        <p>Consume the kit through the per-project flow: a <code>uiforagents.json</code> config plus one CLI. Point <code>kit</code> at a checkout of the repo (or <code>node_modules/uiforagents</code> after <code>npm install uiforagents</code>):</p>
+        <div class="uif-code-block">
+          <div data-slot="header">
+            <span data-slot="label">terminal</span>
+            <button type="button" data-slot="copy">Copy</button>
+          </div>
+          <pre data-slot="code"><code>node uiforagents/scripts/uifa.mjs tokens   # tokens.css from your direction
+node uiforagents/scripts/uifa.mjs add      # copy the configured subset
+node uiforagents/scripts/uifa.mjs scaffold # design-system doc
+node uiforagents/validation/check.mjs      # adherence lint (reports, never fixes)</code></pre>
+        </div>
+        <p>Then build with the copied files like any other HTML/CSS in your stack. This very site is
+        the proof: an Astro static build where every page renders the copied items live.</p>
+      </section>
+    </div>
+  </div>
+</Base>
