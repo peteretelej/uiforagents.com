@@ -37,10 +37,9 @@ const slugs = directions.map((d) => d.slug);
 
 const path = Astro.url.pathname.replace(/\/+$/, "") + "/";
 const navLinks = [
-  { href: "/components/", label: "Components" },
-  { href: "/catalog/", label: "Catalog" },
-  { href: "/theming/", label: "Theming" },
   { href: "/quickstart/", label: "Quickstart" },
+  { href: "/components/", label: "Components" },
+  { href: "/theming/", label: "Theming" },
   { href: "/changelog/", label: "Changelog" },
 ];
 const isActive = (href) => path === href || path.startsWith(href);
@@ -106,10 +105,9 @@ const escapeHtml = (value) => value.replace(/[<>&"]/g, (ch) => ({ "<": "&lt;", "
         </div>
         <nav data-slot="group" aria-label="Site">
           <span data-slot="heading">Site</span>
-          <a data-slot="link" href="/components/">Components</a>
-          <a data-slot="link" href="/catalog/">Catalog</a>
-          <a data-slot="link" href="/theming/">Theming</a>
           <a data-slot="link" href="/quickstart/">Quickstart</a>
+          <a data-slot="link" href="/components/">Components</a>
+          <a data-slot="link" href="/theming/">Theming</a>
           <a data-slot="link" href="/changelog/">Changelog</a>
         </nav>
         <nav data-slot="group" aria-label="Agents">

@@ -732,7 +732,11 @@ pre {
   border-top: 1px solid var(--border);
 }
 
+/* The footer item's shipping surface tint reads as a random band on these
+   pages; the site's footer blends into the page background instead. */
 .site-footer .uif-footer {
+  background: transparent;
+  border-top: none;
   max-width: 1280px;
   margin: 0 auto;
   padding: calc(var(--space) * 5) calc(var(--space) * 3);
