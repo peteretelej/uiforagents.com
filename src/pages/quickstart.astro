@@ -27,18 +27,21 @@ import Base from "../layouts/Base.astro";
 
       <section class="quickstart-col">
         <h2>For humans (and their agents)</h2>
-        <p>Consume the kit through the per-project flow: a <code>uiforagents.json</code> config plus one CLI. Point <code>kit</code> at a checkout of the repo (or <code>node_modules/uiforagents</code> after <code>npm install uiforagents</code>):</p>
+        <p>Consume the kit through the per-project flow: install it, run one command to onboard, then keep a <code>uiforagents.json</code> config as the single source of truth for subset and direction:</p>
         <div class="uif-code-block">
           <div data-slot="header">
             <span data-slot="label">terminal</span>
             <button type="button" data-slot="copy">Copy</button>
           </div>
-          <pre data-slot="code"><code>node uiforagents/scripts/uifa.mjs tokens   # tokens.css from your direction
-node uiforagents/scripts/uifa.mjs add      # copy the configured subset
-node uiforagents/scripts/uifa.mjs scaffold # design-system doc
-node uiforagents/validation/check.mjs      # adherence lint (reports, never fixes)</code></pre>
+          <pre data-slot="code"><code>npm install uiforagents     # the kit + the uiforagents CLI
+npx uiforagents init        # config + all components + tokens + docs
+npx uiforagents tokens      # tokens.css from your direction
+npx uiforagents add         # copy the configured subset
+npx uiforagents scaffold    # design-system doc
+npx uiforagents check       # adherence lint (reports, never fixes)</code></pre>
         </div>
-        <p>Then build with the copied files like any other HTML/CSS in your stack. This very site is
+        <p>Prefer a checkout to a dependency? Point <code>kit</code> in the config at
+        <code>../uiforagents</code> and run the same flow from the clone. This very site is
         the proof: an Astro static build where every page renders the copied items live.</p>
       </section>
     </div>

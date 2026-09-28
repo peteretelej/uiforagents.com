@@ -42,10 +42,9 @@ import ItemExample from "../components/ItemExample.astro";
           <span data-slot="label">setup.sh</span>
           <button type="button" data-slot="copy">Copy</button>
         </div>
-        <pre data-slot="code"><code># clone the kit next to your project
-git clone https://github.com/peteretelej/uiforagents
-node uiforagents/scripts/uifa.mjs add
-node uiforagents/validation/check.mjs</code></pre>
+        <pre data-slot="code"><code>npm install uiforagents
+npx uiforagents init    # components in, tokens wired, docs scaffolded
+npx uiforagents check   # adherence lint</code></pre>
       </div>
     </section>
 
