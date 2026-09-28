@@ -16,4 +16,8 @@ const behavior = manifest.files
 <div class="item-embed" data-item={name}>
   <Fragment set:html={markup} />
 </div>
-{behavior.map((code) => <script is:inline set:html={code} />)}
+<!-- Behavior scripts are classic inline scripts, which share the global
+     lexical scope; the catalog page embeds several on one page and their
+     top-level names collide (toast/audio-player both declared `timer`).
+     Wrap each in an IIFE so every embed keeps its own scope. -->
+{behavior.map((code) => <script is:inline set:html={`(() => {\n${code}\n})();`} />)}

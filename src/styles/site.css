@@ -161,6 +161,7 @@ pre {
   margin: 0 auto;
   padding: calc(var(--space) * 6) calc(var(--space) * 3);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: calc(var(--space) * 4);
 }
 
@@ -505,8 +506,13 @@ pre {
 
 /* Catalog */
 
+/* Grid auto tracks size to the widest min-content they contain; code
+   blocks holding long unbreakable lines would stretch the track and the
+   whole page (theming/quickstart). Clamp the tracks so the code block's
+   own overflow-x handles wide lines instead. */
 .catalog-section {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: calc(var(--space) * 4);
 }
 
@@ -700,6 +706,8 @@ pre {
 
 .quickstart-col {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: calc(var(--space) * 2);
   align-content: start;
 }

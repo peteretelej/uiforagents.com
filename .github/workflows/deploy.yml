@@ -1,0 +1,40 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: site
+      # The kit at a pinned released tag, sibling to the site so the
+      # committed relative config ("kit": "../uiforagents") resolves.
+      - uses: actions/checkout@v6
+        with:
+          repository: peteretelej/uiforagents
+          ref: v0.0.8
+          path: uiforagents
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: npm run build
+        working-directory: site
+      # Assets-only Worker deploy (wrangler.jsonc: assets.directory = dist).
+      # DEPLOY_TOKEN must be an app-scoped Cloudflare API token: account
+      # "Workers" permission group with Editor access, this account only.
+      # It should never be a broadly privileged token.
+      - name: deploy to workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          workingDirectory: site
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

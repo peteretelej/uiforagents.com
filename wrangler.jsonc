@@ -1,0 +1,11 @@
+// Serving model: Cloudflare Workers Static Assets - an assets-only Worker
+// (no script) serving the Astro build output with native directory-index
+// resolution.
+{
+  "name": "uiforagents",
+  "compatibility_date": "2026-09-28",
+  // No workers.dev surface; the apex custom domain is the only public URL.
+  "workers_dev": false,
+  "routes": [{ "pattern": "uiforagents.com", "custom_domain": true }],
+  "assets": { "directory": "./dist" }
+}
