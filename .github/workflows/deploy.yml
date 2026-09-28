@@ -32,9 +32,8 @@ jobs:
       # "Workers" permission group with Editor access, this account only.
       # It should never be a broadly privileged token.
       - name: deploy to workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          workingDirectory: site
+        working-directory: site
+        run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
