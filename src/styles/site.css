@@ -388,6 +388,13 @@ pre {
   letter-spacing: -0.01em;
 }
 
+/* Anton (midnight's display face) is a tight condensed cut; a touch of
+   tracking opens headings up so it stays readable at display sizes. Placed
+   after .hero h1 so it also wins that lockup's tighter tracking. */
+[data-theme="midnight"] :is(h1, h2, h3, h4) {
+  letter-spacing: 0.02em;
+}
+
 .hero .sub {
   margin: 0;
   color: var(--text-muted);
