@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: peteretelej/uiforagents
-          ref: v0.0.8
+          ref: v0.0.9
           path: uiforagents
       - uses: actions/setup-node@v6
         with:
