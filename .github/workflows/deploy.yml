@@ -28,12 +28,12 @@ jobs:
       - run: npm run build
         working-directory: site
       # Assets-only Worker deploy (wrangler.jsonc: assets.directory = dist).
-      # DEPLOY_TOKEN must be an app-scoped Cloudflare API token: account
+      # UAF_DEPLOY_TOKEN must be an app-scoped Cloudflare API token: account
       # "Workers" permission group with Editor access, this account only.
       # It should never be a broadly privileged token.
       - name: deploy to workers
         working-directory: site
         run: npx wrangler deploy
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.UAF_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.UAF_CLOUDFLARE_ACCOUNT_ID }}
