@@ -1,7 +1,7 @@
 {
   "kit": "../uiforagents",
-  "direction": "all",
-  "directionsFile": "directions.mjs",
+  "theme": "all",
+  "themesFile": "themes.mjs",
   "items": [
     "button",
     "filter-bar",
