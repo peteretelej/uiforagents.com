@@ -589,6 +589,7 @@ pre {
 .item-embed .uif-toast-region {
   position: static;
   justify-items: start;
+  row-gap: calc(var(--space) * 2);
 }
 
 .catalog-stage .uif-footer {
