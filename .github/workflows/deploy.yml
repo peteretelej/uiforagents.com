@@ -11,12 +11,12 @@ jobs:
       - uses: actions/checkout@v6
         with:
           path: site
-      # The kit at a pinned released tag, sibling to the site so the
-      # committed relative config ("kit": "../uiforagents") resolves.
+      # The identities repo at main, sibling to the site so the build's
+      # relative sibling resolution ("../uiforagents") holds in CI.
       - uses: actions/checkout@v6
         with:
           repository: peteretelej/uiforagents
-          ref: v0.1.0
+          ref: main
           path: uiforagents
       - uses: actions/setup-node@v6
         with:
@@ -25,6 +25,10 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
         working-directory: site
+      # The site build runs the identities repo's example app (the /demo/
+      # bundle), so its dependencies must be installed first.
+      - run: npm ci
+        working-directory: uiforagents
       - run: npm run build
         working-directory: site
       # Assets-only Worker deploy (wrangler.jsonc: assets.directory = dist).
