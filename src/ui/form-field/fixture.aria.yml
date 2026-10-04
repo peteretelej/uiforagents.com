@@ -1,6 +1,0 @@
-- text: Project name
-- textbox "Project name":
-  - /placeholder: Acme Inc
-- text: Description
-- textbox "Description":
-  - /placeholder: What is this project for?
