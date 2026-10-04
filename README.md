@@ -1,24 +1,38 @@
 # uiforagents-site
 
-Source for [uiforagents.com](https://uiforagents.com), the docs + marketing
-site for [uiforagents](https://github.com/peteretelej/uiforagents), the
-registry-shaped, agent-first vanilla UI kit - built with the kit itself.
+Source for [uiforagents.com](https://uiforagents.com), the identity catalogue for
+[uiforagents](https://github.com/peteretelej/uiforagents) - design identities for
+agent-built apps: complete design systems on shadcn/ui, shipped with the
+prompt-pack your agent follows.
 
 ## Status
 
-In build. A static Astro site: every page is live kit components, restyleable
-through a visitor-facing direction switcher.
+Live catalogue: landing gallery, per-identity pages with a working demo, and
+statically published agent surfaces (registries, prompt-packs, identity specs).
 
 ## Develop
 
 ```sh
 npm install
-npm run dev       # astro dev
-npm run build     # astro build + pagefind + agent surfaces into dist/
+npm run dev       # astro dev (the /demo iframe needs a build; run one first)
+npm run build     # astro build + publish demo/registries/prompt-packs into dist/
 npm run preview   # serve dist/
 ```
 
-The kit is consumed through the per-project flow (`uiforagents.json` +
-`node ../uiforagents/scripts/uifa.mjs`); generated output (`src/ui/`,
-`src/styles/tokens.css`, `docs/design-system.md`) is committed, never
-hand-edited.
+The build reads the sibling identities repo (checked out or cloned next to this
+directory as `uiforagents/`; CI recreates the same layout). It is a read-only
+input: identities, prompt-packs, and registry payloads are read from it, and the
+example app builds straight into `dist/demo/`. The example app needs its
+dependencies installed in the sibling repo first (`npm ci` there).
+
+Pipeline: Astro static output + Cloudflare Workers Static Assets (wrangler).
+
+## Publishing
+
+`npm run build` publishes, per identity `<slug>`:
+
+- `/registries/<slug>/<slug>.json` + `/registries/<slug>/registry.json` (shadcn
+  registry item and index)
+- `/prompt-packs/<slug>.md` (raw agent prompt-pack)
+- `/identities/<slug>.json` (identity spec)
+- `/demo/` (the shared example app; identity switching via `?identity=<slug>`)

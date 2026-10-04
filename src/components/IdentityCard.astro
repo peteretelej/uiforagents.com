@@ -1,0 +1,24 @@
+---
+// Live gallery card: carries the identity's own color via inline --id-*
+// custom properties extracted from its theme at build time. The chrome
+// around it stays neutral.
+const { identity } = Astro.props;
+
+const style = [
+  `--id-bg:${identity.palette.card}`,
+  `--id-fg:${identity.palette.foreground}`,
+  `--id-accent:${identity.palette.primary}`,
+  `--id-gradient-to:${identity.palette["identity-gradient-to"]}`,
+].join(";");
+---
+<a class="identity-card" href={`/identities/${identity.slug}/`} style={style}>
+  <div class="swatch" aria-hidden="true"></div>
+  <div class="body">
+    <h3>{identity.spec.title}</h3>
+    <p class="desc">{identity.spec.description}</p>
+    <div class="chip-row">
+      {identity.spec.vibe.map((tag) => <span class="chip">{tag}</span>)}
+    </div>
+    <span class="go">Open identity →</span>
+  </div>
+</a>

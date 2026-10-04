@@ -1,0 +1,59 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="About - uiforagents" description="From a vanilla UI kit to design identities for agent-built apps: the pivot, the licenses, and what ships next.">
+  <div class="container">
+    <section class="hero" style="padding-bottom: 24px;">
+      <p class="eyebrow">About</p>
+      <h1>From vanilla kit to design identities</h1>
+    </section>
+
+    <section class="section-tight">
+      <div class="about-copy">
+        <p>
+          uiforagents started as an agent-first vanilla UI kit: copy-in HTML/CSS/JS components with
+          zero runtime dependencies, themed by a visitor-facing direction switcher. It proved the
+          core idea - agents can ship production UI when the design decisions are made for them.
+        </p>
+        <p>
+          But "components" was the wrong unit. A pile of well-styled parts still leaves every
+          product decision open: which font, how dense, what radius, when to move. Agents don't need
+          more parts; they need a point of view. So the kit became a catalogue of
+          <strong>design identities</strong> - complete, opinionated systems built on shadcn/ui,
+          Tailwind v4, and Base UI, each shipped with theme tokens, component overrides, composed
+          blocks, fonts, motion defaults, and an agent prompt-pack.
+        </p>
+        <p>
+          The workflow got simpler too: install an identity into any shadcn app with one command,
+          hand your agent the prompt-pack, and ship. No design deliberation, no drift between
+          pages - the identity is the contract.
+        </p>
+        <p class="note">
+          What changed, in one line: the vanilla kit content was dropped in Q1 2026 - it lives on
+          only as the tag <code>archive/vanilla-kit</code> in the
+          <a href="https://github.com/peteretelej/uiforagents">uiforagents</a> repo and
+          <code>archive/vanilla-site</code> in this repo's history.
+        </p>
+
+        <h2 id="license">License</h2>
+        <p>
+          uiforagents is <a href="https://github.com/peteretelej/uiforagents">Apache-2.0</a>. Upstream
+          projects flow through with their own notices: shadcn/ui (MIT), Tailwind CSS (MIT), and
+          Base UI (MIT). Identities may also name their fonts - install them via
+          <code>@fontsource</code> packages under their own licenses.
+        </p>
+
+        <h2>Roadmap</h2>
+        <p>
+          Shipped: <a href="/identities/ocean-calm/">ocean-calm</a>,
+          <a href="/identities/nairobi-noon/">nairobi-noon</a>, and
+          <a href="/identities/graphite-terminal/">graphite-terminal</a>, all live in the catalogue
+          with demos and prompt-packs. Next: more identities across new moods and surfaces, and
+          tighter agent integration as the registry ecosystem grows. The shared five blocks stay the
+          foundation; identities continue the queued-card pattern on the
+          <a href="/#identities">landing gallery</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

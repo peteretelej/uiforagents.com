@@ -1,107 +1,112 @@
 ---
 import Base from "../layouts/Base.astro";
-import ItemExample from "../components/ItemExample.astro";
----
+import IdentityCard from "../components/IdentityCard.astro";
+import { loadIdentities } from "../lib/identities.mjs";
 
+const identities = loadIdentities();
+
+const installCmd = `npx shadcn add https://uiforagents.com/registries/ocean-calm/ocean-calm.json`;
+const installConfig = JSON.stringify(
+  {
+    registries: {
+      "@uiforagents": "https://uiforagents.com/registries/{name}/{name}.json",
+    },
+  },
+  null,
+  2
+);
+---
 <Base>
-  <div class="landing">
+  <div class="container">
     <section class="hero">
-      <p class="kicker">uiforagents</p>
-      <h1>Agent-first UI components. Vanilla HTML/CSS. Any direction.</h1>
-      <p class="sub">
-        A registry-shaped kit of copy-in components with zero runtime dependencies. Agents read the
-        registry and ship the UI; humans review and own the output. Every sample on this page is the
-        kit, live - restyle the whole site with the direction switcher.
+      <p class="eyebrow">uiforagents</p>
+      <h1>Design identities for agent-built apps</h1>
+      <p class="lede">
+        Complete, opinionated design systems on shadcn/ui - tokens, component treatments, blocks,
+        fonts, and motion, bundled with the prompt-pack your agent follows. Pick an identity, install
+        it with one command, and ship product without making a single design decision.
       </p>
       <div class="cta-row">
-        <a class="uif-button" data-variant="primary" href="/quickstart/">Quickstart</a>
-        <a class="uif-button" data-variant="secondary" href="/components/">Browse the components</a>
+        <a class="btn btn-primary" href="#identities">Browse identities</a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
       </div>
     </section>
 
-    <section class="hero-grid">
-      <ul class="pitch-list">
-        <li>
-          <h2>Registry-shaped</h2>
-          <p>Every component is an index line in <a href="/llms.txt">llms.txt</a>, a validated manifest, and
-          machine-readable docs. An agent picks a component and variant without opening a single file.</p>
-        </li>
-        <li>
-          <h2>Themed by tokens</h2>
-          <p>Components read semantic roles - never colors - so one direction token set restyles the whole
-          kit. Try it: the switcher up top re-skins every sample on this site in place.</p>
-        </li>
-        <li>
-          <h2>Zero runtime dependencies</h2>
-          <p>The components are just files: markup, CSS, and a script when behavior calls for it. No
-          framework, no build step, nothing to audit but your own repo.</p>
-        </li>
-      </ul>
-      <div class="uif-code-block">
-        <div data-slot="header">
-          <span data-slot="label">setup.sh</span>
-          <button type="button" data-slot="copy">Copy</button>
-        </div>
-        <pre data-slot="code"><code>npm install uiforagents
-npx uiforagents init    # components in, tokens wired, docs scaffolded
-npx uiforagents check   # adherence lint</code></pre>
+    <section class="section" id="identities" aria-label="Identity gallery">
+      <div class="section-head">
+        <p class="eyebrow">The catalogue</p>
+        <h2>Three identities, ready to ship</h2>
+        <p>Every card below is live: it carries its identity's own color. Open one for a working demo, install commands, and the agent prompt-pack.</p>
+      </div>
+      <div class="identity-grid">
+        {identities.map((identity) => <IdentityCard {identity} />)}
       </div>
     </section>
 
-    <section class="samples">
-      <h2>Live samples</h2>
-      <div class="sample-grid">
-        <div class="sample-cell">
-          <h3>button</h3>
-          <div class="sample-row">
-            <button class="uif-button" data-variant="primary">Deploy</button>
-            <button class="uif-button" data-variant="secondary">Preview</button>
-            <button class="uif-button" data-variant="small">Copy link</button>
-            <button class="uif-button" data-variant="danger">Delete</button>
-          </div>
+    <section class="section" id="how" aria-label="How it works">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>From decision to shipped UI in three steps</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="num">01</span>
+          <h3>Pick an identity</h3>
+          <p>Each identity is a complete design system: theme tokens, component treatments, composed blocks, fonts, and motion defaults. The design decisions are already made.</p>
         </div>
-        <div class="sample-cell">
-          <h3>badge + chip</h3>
-          <div class="sample-row">
-            <span class="uif-badge" data-variant="ok">Passing</span>
-            <span class="uif-badge" data-variant="warn">Degraded</span>
-            <span class="uif-badge" data-variant="danger">Down</span>
-            <span class="uif-chip" data-variant="accent">v0.0.8</span>
-            <span class="uif-chip">vanilla</span>
-          </div>
+        <div class="step">
+          <span class="num">02</span>
+          <h3>Install with one command</h3>
+          <p>Identities are shadcn registry payloads. Add one with a URL, or register the <code>@uiforagents</code> namespace once and install by name.</p>
         </div>
-        <div class="sample-cell">
-          <h3>form-field + toggle</h3>
-          <label class="uif-field">
-            <span data-slot="label">Workspace name</span>
-            <input class="uif-field-input" type="text" placeholder="Acme Inc" />
-          </label>
-          <label class="uif-toggle">
-            <input class="uif-toggle-input" type="checkbox" role="switch" checked />
-            <span data-slot="label">Ship tokens with the bundle</span>
-          </label>
+        <div class="step">
+          <span class="num">03</span>
+          <h3>Hand your agent the prompt-pack</h3>
+          <p>Attach the identity's prompt-pack.md to every agent building UI. It settles typography, color, density, and do/don'ts - the agent stops improvising design and starts shipping.</p>
         </div>
-        <div class="sample-cell">
-          <h3>segmented-control</h3>
-          <div class="uif-segmented" role="radiogroup" aria-label="Interval">
-            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="day" checked /><span data-slot="segment">Day</span></label>
-            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="week" /><span data-slot="segment">Week</span></label>
-            <label class="uif-segmented-option"><input type="radio" name="landing-interval" value="month" /><span data-slot="segment">Month</span></label>
-          </div>
+      </div>
+    </section>
+
+    <section class="section" id="install" aria-label="Install">
+      <div class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2>One command into any shadcn app</h2>
+        <p>Tailwind v4 + React 18+. Swap the slug in the URL for any identity in the catalogue.</p>
+      </div>
+      <div class="stack">
+        <div>
+          <h3>Install by URL</h3>
+          <pre class="code-block"><code>{installCmd}</code></pre>
         </div>
-        <div class="sample-cell">
-          <h3>toast</h3>
-          <ItemExample name="toast" />
+        <div>
+          <h3>Or register the namespace<span class="hint">components.json</span></h3>
+          <pre class="code-block"><code>{installConfig}</code></pre>
+          <p class="code-note">Then: <code>npx shadcn add @uiforagents/ocean-calm</code> (any slug works in place of <code>ocean-calm</code>).</p>
         </div>
-        <div class="sample-cell">
-          <h3>card</h3>
-          <article class="uif-card">
-            <h3 data-slot="title">On-system output</h3>
-            <p data-slot="body">Every color, radius, and shadow above comes from one direction token set. Switch the direction and the card restyles with it.</p>
-            <div data-slot="actions">
-              <span class="uif-badge" data-variant="ok">contrast-checked</span>
-            </div>
-          </article>
+      </div>
+    </section>
+
+    <section class="section" id="agents" aria-label="For agents">
+      <div class="section-head">
+        <p class="eyebrow">For agents</p>
+        <h2>The prompt-pack is the integration</h2>
+        <p>Humans pick the identity; agents build with it. Two artifacts make that work.</p>
+      </div>
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h3>Agent prompt-pack</h3>
+          <p class="desc" style="font-size:14px;color:var(--text-muted);">A markdown contract attached to every agent building UI: fonts, color rules, density, spacing, motion, and do/don'ts. It is the difference between "make it look nice" and a premium result.</p>
+          <a href="/prompt-packs/ocean-calm.md">Read the ocean-calm pack raw →</a>
+        </div>
+        <div class="spec-card">
+          <h3>shadcn registry payload</h3>
+          <p class="desc" style="font-size:14px;color:var(--text-muted);">The machine-readable surface the shadcn CLI consumes: theme CSS, overrides, and composed blocks in one validated payload.</p>
+          <a href="/registries/ocean-calm/ocean-calm.json">Inspect the registry payload →</a>
+        </div>
+        <div class="spec-card">
+          <h3>Identity spec</h3>
+          <p class="desc" style="font-size:14px;color:var(--text-muted);">identity.json is the source of record: tokens, block list, tested versions, license. Published as JSON for tooling.</p>
+          <a href="/identities/ocean-calm.json">Fetch the identity spec →</a>
         </div>
       </div>
     </section>

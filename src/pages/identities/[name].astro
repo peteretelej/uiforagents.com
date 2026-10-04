@@ -1,0 +1,156 @@
+---
+import { getEntry, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { loadIdentities } from "../../lib/identities.mjs";
+
+export function getStaticPaths() {
+  return loadIdentities().map((identity) => ({
+    params: { name: identity.slug },
+    props: { identity },
+  }));
+}
+
+const { identity } = Astro.props;
+const { spec, palette, slug } = identity;
+
+const pack = await getEntry("promptPacks", slug);
+const { Content: PromptPack } = await render(pack);
+
+const demoUrl = `/demo/?identity=${slug}`;
+const installCmd = `npx shadcn add https://uiforagents.com/registries/${slug}/${slug}.json`;
+const installConfig = JSON.stringify(
+  {
+    registries: {
+      "@uiforagents": "https://uiforagents.com/registries/{name}/{name}.json",
+    },
+  },
+  null,
+  2
+);
+
+const style = `--id-accent:${palette.primary};--id-gradient-to:${palette["identity-gradient-to"]};`;
+
+const blockNotes = {
+  hero: "Marketing landing section",
+  auth: "Sign-in and sign-up surface",
+  "dashboard-shell": "Sidebar + topbar app frame",
+  "table-page": "Data table with filters and row states",
+  article: "Long-form reading layout",
+};
+
+const tested = spec.stack?.tested ?? {};
+const stackRows = [
+  ["base", spec.stack?.base],
+  ["primitives", spec.stack?.primitives],
+  ["tailwind", spec.stack?.tailwind],
+  ["react", spec.stack?.react],
+].filter(([, value]) => Boolean(value));
+---
+<Base title={`${spec.title} - uiforagents identity`} description={spec.description}>
+  <div class="container" style={style}>
+    <header class="identity-hero">
+      <div class="band" aria-hidden="true"></div>
+      <p class="eyebrow">Identity</p>
+      <h1>{spec.title}</h1>
+      <p class="desc">{spec.description}</p>
+      <div class="chip-row">
+        {spec.vibe.map((tag) => <span class="chip">{tag}</span>)}
+      </div>
+      <p class="meta-row">
+        <span><strong>v</strong>{spec.version}</span>
+        <span><strong>registry</strong> {spec.registry}</span>
+        <span><strong>license</strong> {spec.license}</span>
+      </p>
+    </header>
+
+    <section class="section-tight" aria-label="Live demo">
+      <div class="section-head">
+        <p class="eyebrow">Live demo</p>
+        <h2>The identity, running</h2>
+        <p>One shared demo app wearing this identity. Use the switcher inside the frame to see all three identities over the same product.</p>
+      </div>
+      <div class="demo-frame">
+        <div class="bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="url">{demoUrl}</span>
+        </div>
+        <iframe src={demoUrl} title={`${spec.title} live demo`} loading="lazy"></iframe>
+      </div>
+      <p class="demo-open">Prefer it full size? <a href={demoUrl}>Open the demo standalone →</a></p>
+    </section>
+
+    <section class="section-tight" aria-label="Install">
+      <div class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2>Add {slug} to your app</h2>
+      </div>
+      <div class="stack">
+        <div>
+          <h3>Install by URL</h3>
+          <pre class="code-block"><code>{installCmd}</code></pre>
+        </div>
+        <div>
+          <h3>Or register the namespace<span class="hint">components.json</span></h3>
+          <pre class="code-block"><code>{installConfig}</code></pre>
+          <p class="code-note">Then: <code>npx shadcn add @uiforagents/{slug}</code>. Import the theme in your global CSS after Tailwind, per the registry payload.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight" aria-label="Agent prompt-pack">
+      <div class="section-head">
+        <p class="eyebrow">Agent prompt-pack</p>
+        <h2>The contract your agent follows</h2>
+        <p>Attach <a href={`/prompt-packs/${slug}.md`}>prompt-pack.md</a> (raw) to every agent building UI with this identity.</p>
+      </div>
+      <div class="prose">
+        <PromptPack />
+      </div>
+    </section>
+
+    <section class="section-tight" aria-label="Blocks">
+      <div class="section-head">
+        <p class="eyebrow">Blocks</p>
+        <h2>Composed sections, styled by the identity</h2>
+        <p>Every block ships in the registry payload and renders live in the <a href={demoUrl}>demo</a>.</p>
+      </div>
+      <div class="blocks-grid">
+        {spec.blocks.map((block) => (
+          <a class="block-tile" href={demoUrl}>
+            <span class="name">{block}</span>
+            <span class="what">{blockNotes[block] ?? "Composed section"}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-label="Spec and license">
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h3>Tested versions</h3>
+          <ul class="spec-list">
+            {Object.entries(tested).map(([k, v]) => (
+              <li><span class="k">{k}</span><span class="v">{v}</span></li>
+            ))}
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3>Stack</h3>
+          <ul class="spec-list">
+            {stackRows.map(([k, v]) => (
+              <li><span class="k">{k}</span><span class="v">{v}</span></li>
+            ))}
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3>License</h3>
+          <p style="font-size:14px;color:var(--text-muted);">
+            {spec.license}. Upstream: shadcn (MIT), Tailwind (MIT), Base UI (MIT) - notices flow
+            through to consumers.
+          </p>
+          <a href="/about/#license">License details →</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
