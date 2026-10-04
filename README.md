@@ -7,8 +7,9 @@ prompt-pack your agent follows.
 
 ## Status
 
-Live catalogue: landing gallery, per-identity pages with a working demo, and
-statically published agent surfaces (registries, prompt-packs, identity specs).
+Live catalogue: landing gallery, three identity pages (ocean-calm, nairobi-noon,
+graphite-terminal) with a working demo, the launch post, and statically published
+agent surfaces (registries, prompt-packs, identity specs).
 
 ## Develop
 
@@ -36,3 +37,9 @@ Pipeline: Astro static output + Cloudflare Workers Static Assets (wrangler).
 - `/prompt-packs/<slug>.md` (raw agent prompt-pack)
 - `/identities/<slug>.json` (identity spec)
 - `/demo/` (the shared example app; identity switching via `?identity=<slug>`)
+
+## License
+
+Apache-2.0, matching the uiforagents identity suite. Upstream projects flow
+through with their own notices: shadcn/ui (MIT), Tailwind CSS (MIT), and
+Base UI (MIT).

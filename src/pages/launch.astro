@@ -1,0 +1,82 @@
+---
+import Base from "../layouts/Base.astro";
+
+const installCmd = `npx shadcn add https://uiforagents.com/registries/ocean-calm/ocean-calm.json`;
+const installConfig = JSON.stringify(
+  {
+    registries: {
+      "@uiforagents": "https://uiforagents.com/registries/{name}/{name}.json",
+    },
+  },
+  null,
+  2
+);
+---
+<Base title="Launch: the identity catalogue is live - uiforagents" description="uiforagents pivots from a vanilla UI kit to a catalogue of design identities for agent-built apps: three identities, one install command, and an agent prompt-pack.">
+  <div class="container">
+    <section class="hero" style="padding-bottom: 24px;">
+      <p class="eyebrow">Launch - October 2026</p>
+      <h1>The identity catalogue is live</h1>
+      <p class="lede">
+        uiforagents is now a catalogue of design identities for agent-built apps: complete,
+        opinionated systems on shadcn/ui. Pick an identity, install it with one command, and hand
+        your agent the prompt-pack. Three ship today: <a href="/identities/ocean-calm/">ocean-calm</a>,
+        <a href="/identities/nairobi-noon/">nairobi-noon</a>, and
+        <a href="/identities/graphite-terminal/">graphite-terminal</a>.
+      </p>
+    </section>
+
+    <section class="section-tight">
+      <div class="about-copy">
+        <h2>The pivot</h2>
+        <p>
+          uiforagents started as an agent-first vanilla UI kit: copy-in HTML/CSS/JS components with
+          zero runtime dependencies. It proved the idea that agents ship production UI when the
+          design decisions are made for them - but it also proved that components are the wrong
+          unit. A pile of well-styled parts still leaves every product decision open: which font,
+          how dense, what radius, when to move. Agents don't need more parts; they need a point of
+          view.
+        </p>
+        <p>
+          So the kit became a catalogue of <strong>design identities</strong>. Each identity bundles
+          theme tokens, component overrides, composed blocks, fonts, motion defaults, and an agent
+          prompt-pack into one installable payload. The identity is the contract: no design
+          deliberation, no drift between pages. The vanilla kit was retired in Q1 2026; the full
+          story and the what-changed note live on the <a href="/about/">about page</a>.
+        </p>
+
+        <h2>How to use an identity with your agent</h2>
+        <p>
+          Install it into any shadcn/ui + Tailwind v4 app (React 18+) by URL - swap the slug for any
+          identity in the catalogue:
+        </p>
+        <pre class="code-block"><code>{installCmd}</code></pre>
+        <p>
+          Or register the <code>@uiforagents</code> namespace once in <code>components.json</code>,
+          then install by name:
+        </p>
+        <pre class="code-block"><code>{installConfig}</code></pre>
+        <p class="code-note">Then: <code>npx shadcn add @uiforagents/ocean-calm</code> (any slug works in place of <code>ocean-calm</code>).</p>
+        <p>
+          Next, attach the identity's <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a> to
+          every agent building UI. The pack encodes the identity's design decisions - typography,
+          color rules, density, component choices, do/don'ts - so the agent stops improvising design
+          and starts shipping. Humans pick the identity; the agent builds with it.
+        </p>
+        <p>
+          Want to see an identity running first? Every identity page embeds a live demo - the same
+          example app wearing each identity, switchable inside the frame. Start at
+          <a href="/identities/graphite-terminal/">graphite-terminal</a> or browse the
+          <a href="/#identities">gallery</a>.
+        </p>
+
+        <h2>What's next</h2>
+        <p>
+          More identities across new moods and surfaces, continuing the queued-card pattern on the
+          landing gallery, and tighter agent integration as the registry ecosystem grows. The
+          catalogue, licenses, and roadmap are on the <a href="/about/">about page</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

@@ -19,6 +19,7 @@ const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const navLinks = [
   { href: "/#identities", label: "Identities", match: null },
   { href: "/#how", label: "How it works", match: null },
+  { href: "/launch/", label: "Launch", match: "/launch" },
   { href: "/about/", label: "About", match: "/about" },
 ];
 const isActive = (link) => link.match !== null && (path === link.match || path.startsWith(link.match));
@@ -61,6 +62,7 @@ const isActive = (link) => link.match !== null && (path === link.match || path.s
           <a href="/identities/ocean-calm/">ocean-calm</a>
           <a href="/identities/nairobi-noon/">nairobi-noon</a>
           <a href="/identities/graphite-terminal/">graphite-terminal</a>
+          <a href="/launch/">launch post</a>
         </nav>
         <nav class="group" aria-label="Agents">
           <span>Agents</span>
