@@ -1,18 +1,14 @@
 ---
 // Studio chrome: neutral light shell, azure accent, Plus Jakarta display
 // over Inter body. Identity color lives in cards and demo frames only.
-import "@fontsource/inter/latin-400.css";
-import "@fontsource/inter/latin-500.css";
-import "@fontsource/inter/latin-600.css";
-import "@fontsource/inter/latin-700.css";
-import "@fontsource/plus-jakarta-sans/latin-600.css";
-import "@fontsource/plus-jakarta-sans/latin-700.css";
-import "@fontsource/plus-jakarta-sans/latin-800.css";
-import "../styles/site.css";
+// Site pages import site.css + the site fonts themselves; identity pages
+// bring their own Tailwind entry, so this layout serves both modes.
+import { listIdentities } from "../lib/identities.mjs";
 
 const {
   title = "uiforagents - design identities for agent-built apps",
   description = "Complete, opinionated design systems on shadcn/ui. Pick an identity, install it with one command, and hand your agent the prompt-pack - no design decisions left to make.",
+  identity = null, // { slug } set by identity-styled pages
 } = Astro.props;
 
 const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
@@ -23,9 +19,17 @@ const navLinks = [
   { href: "/about/", label: "About", match: "/about" },
 ];
 const isActive = (link) => link.match !== null && (path === link.match || path.startsWith(link.match));
+
+// Single central registration of the identity links used by both footers.
+const identityLinks = listIdentities().map((slug) => ({
+  slug,
+  href: `/identities/${slug}/`,
+}));
+const slug = identity?.slug;
+const htmlAttrs = slug ? { "data-theme": slug, "data-identity": slug } : {};
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" {...htmlAttrs}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,43 +39,106 @@ const isActive = (link) => link.match !== null && (path === link.match || path.s
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <div class="site-header">
-      <div class="container site-nav">
-        <a class="wordmark" href="/">uiforagents</a>
-        <nav class="site-nav-links" aria-label="Main">
-          {navLinks.map((link) => (
-            <a href={link.href} aria-current={isActive(link) ? "page" : undefined}>{link.label}</a>
-          ))}
-          <a class="nav-cta" href="https://github.com/peteretelej/uiforagents">GitHub</a>
-        </nav>
+    {!slug && <a class="skip-link" href="#main">Skip to content</a>}
+    {slug ? (
+      <div data-theme={slug} data-identity={slug} class="min-h-screen bg-background text-foreground">
+        <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[10px] focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-foreground">Skip to content</a>
+        <header class="border-b border-border bg-background/95 backdrop-blur">
+          <div class="mx-auto flex h-14 max-w-[1120px] items-center gap-6 px-6">
+            <a href="/" class="font-display text-[19px] font-extrabold tracking-[-0.02em]">uiforagents</a>
+            <nav class="hidden items-center gap-5 text-sm sm:ml-auto sm:flex" aria-label="Main">
+              {navLinks.map((link) => (
+                <a
+                  href={link.href}
+                  aria-current={isActive(link) ? "page" : undefined}
+                  class:list={["transition-colors hover:text-foreground", isActive(link) ? "font-semibold text-foreground" : "text-muted-foreground"]}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <a
+              href="https://github.com/peteretelej/uiforagents"
+              class:list={[
+                "rounded-[10px] border border-border bg-secondary px-3.5 py-1.5 font-semibold text-secondary-foreground transition-colors hover:bg-accent",
+                "ml-auto sm:ml-0",
+              ]}
+            >
+              GitHub
+            </a>
+          </div>
+        </header>
+        <main id="main">
+          <slot />
+        </main>
+        <footer class="border-t border-border bg-background">
+          <div class="mx-auto grid max-w-[1120px] gap-8 px-6 py-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_auto_auto]">
+            <div class="max-w-[340px]">
+              <a href="/" class="font-display text-[17px] font-extrabold tracking-[-0.02em]">uiforagents</a>
+              <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Design identities for agent-built apps. Complete design systems on shadcn/ui, shipped with the prompt-pack your agent follows.</p>
+            </div>
+            <nav class="flex flex-col gap-2 text-sm" aria-label="Catalogue">
+              <span class="font-semibold">Catalogue</span>
+              <a href="/#identities" class="text-muted-foreground transition-colors hover:text-foreground">Identities</a>
+              {identityLinks.map((link) => (
+                <a
+                  href={link.href}
+                  aria-current={link.slug === slug ? "page" : undefined}
+                  class:list={["transition-colors hover:text-foreground", link.slug === slug ? "font-semibold text-foreground" : "text-muted-foreground"]}
+                >
+                  {link.slug}
+                </a>
+              ))}
+              <a href="/launch/" class="text-muted-foreground transition-colors hover:text-foreground">launch post</a>
+            </nav>
+            <nav class="flex flex-col gap-2 text-sm" aria-label="Agents">
+              <span class="font-semibold">Agents</span>
+              <a href={`/prompt-packs/${slug}.md`} class="text-muted-foreground transition-colors hover:text-foreground">prompt-pack.md</a>
+              <a href={`/registries/${slug}/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">registry payload</a>
+              <a href={`/identities/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">identity spec</a>
+            </nav>
+            <p class="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">© 2026 Peter Etelej. Apache-2.0.</p>
+          </div>
+        </footer>
       </div>
-    </div>
-    <main id="main">
-      <slot />
-    </main>
-    <div class="site-footer">
-      <div class="container inner">
-        <div class="group" style="max-width: 340px;">
+    ) : (
+      <div class="site-header">
+        <div class="container site-nav">
           <a class="wordmark" href="/">uiforagents</a>
-          <p class="note">Design identities for agent-built apps. Complete design systems on shadcn/ui, shipped with the prompt-pack your agent follows.</p>
+          <nav class="site-nav-links" aria-label="Main">
+            {navLinks.map((link) => (
+              <a href={link.href} aria-current={isActive(link) ? "page" : undefined}>{link.label}</a>
+            ))}
+            <a class="nav-cta" href="https://github.com/peteretelej/uiforagents">GitHub</a>
+          </nav>
         </div>
-        <nav class="group" aria-label="Catalogue">
-          <span>Catalogue</span>
-          <a href="/#identities">Identities</a>
-          <a href="/identities/ocean-calm/">ocean-calm</a>
-          <a href="/identities/nairobi-noon/">nairobi-noon</a>
-          <a href="/identities/graphite-terminal/">graphite-terminal</a>
-          <a href="/launch/">launch post</a>
-        </nav>
-        <nav class="group" aria-label="Agents">
-          <span>Agents</span>
-          <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a>
-          <a href="/registries/ocean-calm/ocean-calm.json">registry payload</a>
-          <a href="/identities/ocean-calm.json">identity spec</a>
-        </nav>
-        <p class="legal">© 2026 Peter Etelej. Apache-2.0.</p>
       </div>
-    </div>
+    )}
+    {!slug && <main id="main"><slot /></main>}
+    {!slug && (
+      <div class="site-footer">
+        <div class="container inner">
+          <div class="group" style="max-width: 340px;">
+            <a class="wordmark" href="/">uiforagents</a>
+            <p class="note">Design identities for agent-built apps. Complete design systems on shadcn/ui, shipped with the prompt-pack your agent follows.</p>
+          </div>
+          <nav class="group" aria-label="Catalogue">
+            <span>Catalogue</span>
+            <a href="/#identities">Identities</a>
+            {identityLinks.map((link) => (
+              <a href={link.href}>{link.slug}</a>
+            ))}
+            <a href="/launch/">launch post</a>
+          </nav>
+          <nav class="group" aria-label="Agents">
+            <span>Agents</span>
+            <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a>
+            <a href="/registries/ocean-calm/ocean-calm.json">registry payload</a>
+            <a href="/identities/ocean-calm.json">identity spec</a>
+          </nav>
+          <p class="legal">© 2026 Peter Etelej. Apache-2.0.</p>
+        </div>
+      </div>
+    )}
   </body>
 </html>

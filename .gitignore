@@ -2,6 +2,8 @@
 dist/
 # generated types
 .astro/
+# generated identity tailwind entry (astro.config.mjs)
+src/styles/identity.generated.css
 
 # dependencies
 node_modules/

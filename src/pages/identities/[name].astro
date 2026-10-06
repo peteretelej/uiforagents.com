@@ -2,6 +2,13 @@
 import { getEntry, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { loadIdentities } from "../../lib/identities.mjs";
+import { getBlocks } from "../../lib/blocks";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import "../../styles/identity.generated.css";
 
 export function getStaticPaths() {
   return loadIdentities().map((identity) => ({
@@ -11,12 +18,63 @@ export function getStaticPaths() {
 }
 
 const { identity } = Astro.props;
-const { spec, palette, slug } = identity;
+const { spec, slug } = identity;
+const {
+  Hero,
+  AuthCard,
+  DashboardShell,
+  TablePage,
+  Article,
+} = getBlocks(slug);
 
 const pack = await getEntry("promptPacks", slug);
 const { Content: PromptPack } = await render(pack);
 
-const demoUrl = `/demo/?identity=${slug}`;
+const identities = loadIdentities().map((i) => ({ slug: i.slug, spec: i.spec }));
+
+// uiforagents-branded sample content, identical across identities. Blocks
+// with prop surfaces take their content from here.
+const brand = {
+  eyebrow: "uiforagents",
+  title: "Design identities for",
+  accent: "agent-built apps",
+  description:
+    "Complete, opinionated design systems on shadcn/ui. Pick an identity, install it with one command, and hand your agent the prompt-pack - no design decisions left to make.",
+  primaryCta: "Pick an identity",
+  secondaryCta: "See the suite",
+  stats: [
+    { value: "3", label: "identities" },
+    { value: "10", label: "components each" },
+    { value: "2,580", label: "installs" },
+    { value: "3,418", label: "agent builds" },
+  ],
+};
+
+const shellNav = [
+  { label: "Identities", active: true },
+  { label: "Prompt-packs" },
+  { label: "Registry" },
+];
+const catalogueNav = [
+  { label: "Overview" },
+  { label: "Catalogue", active: true },
+  { label: "Prompt-packs" },
+  { label: "Registry" },
+];
+const catalogueColumns = ["Code", "Kind", "Identity", "Status", "Usage"];
+const catalogueJobs = [
+  { code: "ID-01", trade: "Identity", customer: "ocean-calm", status: "Live", tone: "ok", price: "1,024 installs" },
+  { code: "ID-02", trade: "Identity", customer: "nairobi-noon", status: "Live", tone: "ok", price: "864 installs" },
+  { code: "ID-03", trade: "Identity", customer: "graphite-terminal", status: "Live", tone: "ok", price: "692 installs" },
+  { code: "ID-04", trade: "Agent build", customer: "prompt-pack driven", status: "Passing", tone: "ok", price: "3,418 runs" },
+];
+const catalogueServices = [
+  { id: "ID-01", service: "Identity", owner: "ocean-calm", status: "Live", tone: "ok", p99: "1,024 installs" },
+  { id: "ID-02", service: "Identity", owner: "nairobi-noon", status: "Live", tone: "ok", p99: "864 installs" },
+  { id: "ID-03", service: "Identity", owner: "graphite-terminal", status: "Live", tone: "ok", p99: "692 installs" },
+  { id: "ID-04", service: "Agent build", owner: "prompt-pack driven", status: "Passing", tone: "ok", p99: "3,418 runs" },
+];
+
 const installCmd = `npx shadcn add https://uiforagents.com/registries/${slug}/${slug}.json`;
 const installConfig = JSON.stringify(
   {
@@ -27,13 +85,15 @@ const installConfig = JSON.stringify(
   null,
   2
 );
-
-const style = `--id-accent:${palette.primary};--id-gradient-to:${palette["identity-gradient-to"]};`;
+const installNote =
+  slug === "nairobi-noon"
+    ? "Verified behavior: this payload declares no registry dependencies - it adds the theme, blocks, and prompt-pack only. If your project lacks the stock primitives, add them first: npx shadcn add button card badge input label."
+    : "Verified behavior: this also installs the stock shadcn primitives (button, card, badge, input, label) from the default registry, then adds the theme, blocks, and prompt-pack under src/identities/" + slug + "/.";
 
 const blockNotes = {
   hero: "Marketing landing section",
   auth: "Sign-in and sign-up surface",
-  "dashboard-shell": "Sidebar + topbar app frame",
+  "dashboard-shell": "Topbar + stats app frame",
   "table-page": "Data table with filters and row states",
   article: "Long-form reading layout",
 };
@@ -46,111 +106,313 @@ const stackRows = [
   ["react", spec.stack?.react],
 ].filter(([, value]) => Boolean(value));
 ---
-<Base title={`${spec.title} - uiforagents identity`} description={spec.description}>
-  <div class="container" style={style}>
-    <header class="identity-hero">
-      <div class="band" aria-hidden="true"></div>
-      <p class="eyebrow">Identity</p>
-      <h1>{spec.title}</h1>
-      <p class="desc">{spec.description}</p>
-      <div class="chip-row">
-        {spec.vibe.map((tag) => <span class="chip">{tag}</span>)}
-      </div>
-      <p class="meta-row">
-        <span><strong>v</strong>{spec.version}</span>
-        <span><strong>registry</strong> {spec.registry}</span>
-        <span><strong>license</strong> {spec.license}</span>
-      </p>
-    </header>
-
-    <section class="section-tight" aria-label="Live demo">
-      <div class="section-head">
-        <p class="eyebrow">Live demo</p>
-        <h2>The identity, running</h2>
-        <p>One shared demo app wearing this identity. Use the switcher inside the frame to see all three identities over the same product.</p>
-      </div>
-      <div class="demo-frame">
-        <div class="bar">
-          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="url">{demoUrl}</span>
+<Base title={`${spec.title} - uiforagents identity`} description={spec.description} identity={{ slug }}>
+  <div class="mx-auto max-w-[1120px] px-6">
+      <header class="pt-12">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Identity</p>
+        <h1 class="mt-3 font-display text-[clamp(32px,4.5vw,44px)] font-extrabold leading-[1.08] tracking-[-0.03em]">{spec.title}</h1>
+        <p class="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-muted-foreground">{spec.description}</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          {spec.vibe.map((tag) => (
+            <Badge variant="secondary" class="rounded-full px-3 py-1 text-[11.5px]">{tag}</Badge>
+          ))}
         </div>
-        <iframe src={demoUrl} title={`${spec.title} live demo`} loading="lazy"></iframe>
+        <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
+          <span><strong class="font-semibold text-foreground">v</strong>{spec.version}</span>
+          <span><strong class="font-semibold text-foreground">registry</strong> {spec.registry}</span>
+          <span><strong class="font-semibold text-foreground">license</strong> {spec.license}</span>
+        </p>
+      </header>
+
+      <section class="pt-12" aria-label="Identity switcher">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Switcher</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Every identity, one click away</h2>
+        <div class="mt-5 grid gap-4 sm:grid-cols-3">
+          {identities.map((i) => (
+            <a
+              href={`/identities/${i.slug}/`}
+              aria-current={i.slug === slug ? "page" : undefined}
+              class:list={[
+                "rounded-[14px] border bg-card p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-identity)]",
+                i.slug === slug ? "border-primary shadow-[var(--shadow-identity)]" : "border-border",
+              ]}
+            >
+              <span class="font-display text-[17px] font-bold">{i.spec.title}</span>
+              <span class="mt-1 block font-mono text-[12.5px] text-muted-foreground">{i.slug}</span>
+              {i.slug === slug && (
+                <Badge class="mt-3">viewing</Badge>
+              )}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="pt-14" aria-label="UI primitives">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">UI primitives, live</h2>
+        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five shadcn primitives as this identity ships them - same components, its tokens and treatments.</p>
+        <div class="mt-5 grid gap-4 md:grid-cols-2">
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <h3 class="font-display text-[16px] font-bold">Button</h3>
+            <div class="mt-3 flex flex-wrap items-center gap-2.5">
+              <Button size="sm">Default</Button>
+              <Button size="sm" variant="secondary">Secondary</Button>
+              <Button size="sm" variant="outline">Outline</Button>
+              <Button size="sm" variant="ghost">Ghost</Button>
+              <Button size="sm" variant="destructive">Destructive</Button>
+              <Button size="sm" variant="link">Link</Button>
+            </div>
+          </div>
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <h3 class="font-display text-[16px] font-bold">Badge</h3>
+            <div class="mt-3 flex flex-wrap items-center gap-2.5">
+              <Badge>Default</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="outline">Outline</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+            </div>
+          </div>
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <h3 class="font-display text-[16px] font-bold">Card</h3>
+            <Card class="mt-3 rounded-xl">
+              <CardHeader>
+                <CardTitle class="font-display text-[15px] font-bold">Registry payload</CardTitle>
+                <CardDescription>Theme, overrides, blocks, and prompt-pack in one install.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="secondary">registry:style</Badge>
+              </CardContent>
+            </Card>
+          </div>
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <h3 class="font-display text-[16px] font-bold">Input + Label</h3>
+            <div class="mt-3 grid gap-3">
+              <div class="grid gap-1.5">
+                <Label for="suite-email">Email</Label>
+                <Input id="suite-email" type="text" placeholder="you@agency.dev" />
+              </div>
+              <div class="grid gap-1.5">
+                <Label for="suite-key">API key</Label>
+                <Input id="suite-key" type="password" placeholder="••••••••" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="pt-14" aria-label="Blocks">
+      <div class="mx-auto max-w-[1120px] px-6">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Blocks, rendered live</h2>
+        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five blocks every install ships, server-rendered in this identity with uiforagents content.</p>
       </div>
-      <p class="demo-open">Prefer it full size? <a href={demoUrl}>Open the demo standalone →</a></p>
+
+      <div class="mx-auto max-w-[1120px] px-6 pt-8">
+        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · hero</p>
+        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.hero}</p>
+      </div>
+      <div class="mt-3 rounded-[14px] border border-border bg-card mx-auto max-w-[1120px] md:p-4 overflow-hidden">
+        <Hero
+          eyebrow={brand.eyebrow}
+          title={brand.title}
+          accent={brand.accent}
+          description={brand.description}
+          primaryCta={brand.primaryCta}
+          secondaryCta={brand.secondaryCta}
+          stats={brand.stats}
+        />
+      </div>
+
+      <div class="mx-auto max-w-[1120px] px-6 pt-10">
+        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · auth</p>
+        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.auth}</p>
+        <div class="mt-3 flex justify-center rounded-[14px] border border-border bg-card px-6 py-10">
+          <AuthCard
+            title="Sign in to uiforagents"
+            description="Agent-built apps deserve agent-grade design."
+            primaryCta="Sign in"
+          />
+        </div>
+      </div>
+
+      <div class="pt-10">
+        <div class="mx-auto max-w-[1120px] px-6">
+          <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · dashboard-shell</p>
+          <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["dashboard-shell"]}</p>
+        </div>
+        <div class="mt-3 border-y border-border bg-card overflow-x-auto">
+          <DashboardShell title="uiforagents" nav={shellNav} stats={brand.stats}>
+            <div class="grid gap-4 pb-8 lg:grid-cols-3">
+              <Card class="rounded-xl px-5 py-4">
+                <CardTitle class="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
+                <CardDescription class="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
+              </Card>
+              <Card class="rounded-xl px-5 py-4">
+                <CardTitle class="font-display text-[16px] font-bold">Blocks included</CardTitle>
+                <CardDescription class="mt-1.5">Five composed sections, content adapted per project.</CardDescription>
+              </Card>
+              <Card class="rounded-xl px-5 py-4">
+                <CardTitle class="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
+                <CardDescription class="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
+              </Card>
+            </div>
+          </DashboardShell>
+        </div>
+      </div>
+
+      <div class="pt-10">
+        <div class="mx-auto max-w-[1120px] px-6">
+          <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · table-page</p>
+          <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["table-page"]}</p>
+        </div>
+        <div class="mt-3 border-y border-border bg-card pb-8 overflow-x-auto">
+          {slug === "graphite-terminal" ? (
+            <TablePage
+              title="uiforagents"
+              nav={catalogueNav}
+              stats={brand.stats}
+              heading="Catalogue"
+              columns={catalogueColumns}
+              rows={catalogueServices}
+            />
+          ) : (
+            <TablePage
+              title="uiforagents"
+              nav={catalogueNav}
+              stats={brand.stats}
+              heading="Catalogue"
+              columns={catalogueColumns}
+              rows={catalogueJobs}
+            />
+          )}
+        </div>
+      </div>
+
+      <div class="mx-auto max-w-[1120px] px-6 pt-10">
+        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · article</p>
+        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.article}</p>
+        <div class="mt-3 rounded-[14px] border border-border bg-card">
+          <Article
+            eyebrow="Guide"
+            title="Ship an agent-built app with an identity"
+            meta="uiforagents guide · updated October 2026"
+          >
+            <p>An identity is a complete design system: tokens, component treatments, blocks, and the prompt-pack your agent follows. Installation is one command; from there the design decisions are already made.</p>
+            <h2>Three steps</h2>
+            <ul>
+              <li>Pick an identity and install it by URL with the shadcn CLI.</li>
+              <li>Import the theme after Tailwind and set <strong>data-identity</strong> on your root element.</li>
+              <li>Attach the prompt-pack to every agent building UI - it is the binding contract.</li>
+            </ul>
+            <blockquote>Brand happens via tokens and overrides, never per-project restyling.</blockquote>
+            <p>Start from the blocks, adapt the content, and ship. The suite on this page is everything the identity installs.</p>
+          </Article>
+        </div>
+      </div>
     </section>
 
-    <section class="section-tight" aria-label="Install">
-      <div class="section-head">
-        <p class="eyebrow">Install</p>
-        <h2>Add {slug} to your app</h2>
-      </div>
-      <div class="stack">
-        <div>
-          <h3>Install by URL</h3>
-          <pre class="code-block"><code>{installCmd}</code></pre>
+    <div class="mx-auto max-w-[1120px] px-6 pb-16">
+      <section class="pt-14" aria-label="Install">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Install</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Add {slug} to your app</h2>
+        <div class="mt-5 grid gap-5 lg:grid-cols-2">
+          <div class="min-w-0">
+            <h3 class="font-display text-[15px] font-bold">Install by URL</h3>
+            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[12.5px] leading-relaxed"><code>{installCmd}</code></pre>
+            <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">{installNote}</p>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-[15px] font-bold">Or register the namespace<span class="ml-2 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-mono font-normal text-muted-foreground">components.json</span></h3>
+            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[12.5px] leading-relaxed"><code>{installConfig}</code></pre>
+            <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">Then: <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[12px]">npx shadcn add @uiforagents/{slug}</code>. Import the theme in your global CSS after Tailwind, per the registry payload.</p>
+          </div>
         </div>
-        <div>
-          <h3>Or register the namespace<span class="hint">components.json</span></h3>
-          <pre class="code-block"><code>{installConfig}</code></pre>
-          <p class="code-note">Then: <code>npx shadcn add @uiforagents/{slug}</code>. Import the theme in your global CSS after Tailwind, per the registry payload.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section-tight" aria-label="Agent prompt-pack">
-      <div class="section-head">
-        <p class="eyebrow">Agent prompt-pack</p>
-        <h2>The contract your agent follows</h2>
-        <p>Attach <a href={`/prompt-packs/${slug}.md`}>prompt-pack.md</a> (raw) to every agent building UI with this identity.</p>
-      </div>
-      <div class="prose">
-        <PromptPack />
-      </div>
-    </section>
+      <section class="pt-14" aria-label="Agent prompt-pack">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Agent prompt-pack</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">The contract your agent follows</h2>
+        <p class="mt-1.5 text-[15px] text-muted-foreground">Attach <a class="font-semibold text-primary underline underline-offset-4" href={`/prompt-packs/${slug}.md`}>prompt-pack.md</a> (raw) to every agent building UI with this identity.</p>
+        <div class="prompt-pack mt-5 rounded-[14px] border border-border bg-card p-6 lg:p-8">
+          <PromptPack />
+        </div>
+      </section>
 
-    <section class="section-tight" aria-label="Blocks">
-      <div class="section-head">
-        <p class="eyebrow">Blocks</p>
-        <h2>Composed sections, styled by the identity</h2>
-        <p>Every block ships in the registry payload and renders live in the <a href={demoUrl}>demo</a>.</p>
-      </div>
-      <div class="blocks-grid">
-        {spec.blocks.map((block) => (
-          <a class="block-tile" href={demoUrl}>
-            <span class="name">{block}</span>
-            <span class="what">{blockNotes[block] ?? "Composed section"}</span>
-          </a>
-        ))}
-      </div>
-    </section>
+      <section class="pt-14" aria-label="Spec and license">
+        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Spec</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Versions, stack, license</h2>
+        <div class="mt-5 grid gap-4 md:grid-cols-3">
+          <Card class="rounded-[14px]">
+            <CardHeader>
+              <CardTitle class="font-display text-[15px] font-bold">Tested versions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl class="grid gap-1.5 text-[13.5px]">
+                {Object.entries(tested).map(([k, v]) => (
+                  <div class="flex items-baseline justify-between gap-3">
+                    <dt class="font-mono text-[12px] text-muted-foreground">{k}</dt>
+                    <dd class="text-right">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </CardContent>
+          </Card>
+          <Card class="rounded-[14px]">
+            <CardHeader>
+              <CardTitle class="font-display text-[15px] font-bold">Stack</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl class="grid gap-1.5 text-[13.5px]">
+                {stackRows.map(([k, v]) => (
+                  <div class="flex items-baseline justify-between gap-3">
+                    <dt class="font-mono text-[12px] text-muted-foreground">{k}</dt>
+                    <dd class="text-right">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </CardContent>
+          </Card>
+          <Card class="rounded-[14px]">
+            <CardHeader>
+              <CardTitle class="font-display text-[15px] font-bold">License</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p class="text-[13.5px] leading-relaxed text-muted-foreground">
+                {spec.license}. Upstream: shadcn (MIT), Tailwind (MIT), Base UI (MIT) - notices flow through to consumers.
+              </p>
+              <a href="/about/#license" class="mt-3 inline-block text-[13.5px] font-semibold text-primary underline underline-offset-4">License details →</a>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    </div>
 
-    <section class="section" aria-label="Spec and license">
-      <div class="spec-grid">
-        <div class="spec-card">
-          <h3>Tested versions</h3>
-          <ul class="spec-list">
-            {Object.entries(tested).map(([k, v]) => (
-              <li><span class="k">{k}</span><span class="v">{v}</span></li>
-            ))}
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3>Stack</h3>
-          <ul class="spec-list">
-            {stackRows.map(([k, v]) => (
-              <li><span class="k">{k}</span><span class="v">{v}</span></li>
-            ))}
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3>License</h3>
-          <p style="font-size:14px;color:var(--text-muted);">
-            {spec.license}. Upstream: shadcn (MIT), Tailwind (MIT), Base UI (MIT) - notices flow
-            through to consumers.
-          </p>
-          <a href="/about/#license">License details →</a>
-        </div>
-      </div>
-    </section>
-  </div>
+  <style is:global>
+    /* Font utilities resolve through the active identity's own tokens, not
+       the merged @theme mapping (all identity themes share one stylesheet). */
+    [data-identity] .font-display { font-family: var(--font-display); }
+    [data-identity] .font-sans { font-family: var(--font-sans); }
+    [data-identity] .font-mono { font-family: var(--font-mono); }
+
+    /* Prompt-pack prose, token-styled (markdown renders without scope attrs). */
+    .prompt-pack { font-size: 15px; line-height: 1.65; }
+    .prompt-pack h1 { font-family: var(--font-display); font-size: 23px; letter-spacing: -0.01em; }
+    .prompt-pack h2 { font-family: var(--font-display); font-size: 19px; margin: 1.8rem 0 0.5rem; letter-spacing: -0.01em; }
+    .prompt-pack h3 { font-family: var(--font-display); font-size: 16px; margin: 1.4rem 0 0.4rem; }
+    .prompt-pack p { margin: 0.7rem 0; }
+    .prompt-pack ul, .prompt-pack ol { margin: 0.7rem 0 0.7rem 1.25rem; }
+    .prompt-pack ul { list-style: disc; }
+    .prompt-pack ol { list-style: decimal; }
+    .prompt-pack li { margin: 0.3rem 0; }
+    .prompt-pack strong { font-weight: 600; }
+    .prompt-pack code { font-family: var(--font-mono); font-size: 0.85em; background: var(--secondary); border: 1px solid var(--border); border-radius: 6px; padding: 0.1em 0.35em; }
+    .prompt-pack pre { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; margin: 1rem 0; }
+    .prompt-pack pre code { background: none; border: none; padding: 0; font-size: 12.5px; }
+    .prompt-pack a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+    .prompt-pack blockquote { border-left: 3px solid var(--primary); padding-left: 14px; color: var(--muted-foreground); margin: 1rem 0; }
+    .prompt-pack hr { border: 0; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+    .prompt-pack table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+    .prompt-pack th, .prompt-pack td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+  </style>
 </Base>
