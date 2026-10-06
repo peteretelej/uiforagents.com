@@ -1,34 +1,19 @@
 // Publishes the identity catalogue's agent surfaces into the build output:
-// /demo/ (the sibling example app, one bundle, ?identity= switching),
 // /registries/<slug>/ (shadcn registry item + per-slug index),
-// /prompt-packs/<slug>.md, and /identities/<slug>.json (identity specs).
-// The sibling identities repo is a read-only input: the example app builds
-// straight into the site's dist/, so nothing inside the sibling is written.
-import { cp, mkdir } from "node:fs/promises";
-import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+// /prompt-packs/<slug>.md, /identities/<slug>.json (identity specs), and
+// /llms.txt (generated agent front door).
+// The sibling identities repo is a read-only input: its plain files are the
+// source for every surface; nothing inside the sibling is written.
+import { cp, mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { identitiesRoot, listIdentities } from "../src/lib/identities.mjs";
+import { identitiesRoot, listIdentities, loadIdentities } from "../src/lib/identities.mjs";
 
 const SITE_ROOT = pathToFileURL(process.cwd().replace(/\/?$/, "/"));
+const SITE_URL = "https://uiforagents.com";
 const dist = (rest) => fileURLToPath(new URL(`dist/${rest}`, SITE_ROOT));
 const sibling = (rest) => fileURLToPath(new URL(rest, identitiesRoot()));
 
-// 1. Demo bundle: vite build with the output aimed at dist/demo. Run with the
-// sibling example app's cwd so its config and aliases resolve; use the
-// identities repo's own vite install.
-const exampleDir = sibling("example/");
-const viteBin = sibling("node_modules/.bin/vite");
-if (!existsSync(viteBin)) {
-  throw new Error("vite not found in the identities repo - run `npm ci` there first");
-}
-console.log("building demo bundle (example app) -> dist/demo ...");
-execFileSync(viteBin, ["build", "--outDir", dist("demo"), "--emptyOutDir"], {
-  cwd: exampleDir,
-  stdio: "inherit",
-});
-
-// 2-4. Per-identity static surfaces.
+// 1-3. Per-identity static surfaces, copied byte-identical from the sibling.
 await mkdir(dist("prompt-packs"), { recursive: true });
 await mkdir(dist("identities"), { recursive: true });
 for (const slug of listIdentities()) {
@@ -39,5 +24,55 @@ for (const slug of listIdentities()) {
   await cp(sibling(`identities/${slug}/identity.json`), dist(`identities/${slug}.json`));
 }
 
+// 4. llms.txt, generated from the catalogue so new identities appear
+// automatically. The usage guide on the homepage is the canonical flow.
+const installConfig = JSON.stringify(
+  {
+    registries: {
+      "@uiforagents": `${SITE_URL}/registries/{name}/{name}.json`,
+    },
+  },
+  null,
+  2
+);
+const llms = [
+  "# uiforagents",
+  "",
+  "> Design identities for agent-built apps: complete, opinionated design systems on shadcn/ui (Tailwind v4), each shipped with the prompt-pack your agent follows.",
+  "",
+  "## Install",
+  "",
+  "Install an identity into any shadcn app by URL:",
+  "",
+  ...listIdentities().map((slug) => `- \`npx shadcn add ${SITE_URL}/registries/${slug}/${slug}.json\``),
+  "",
+  "Or register the namespace once in components.json, then install by name:",
+  "",
+  "```json",
+  installConfig,
+  "```",
+  "",
+  ...listIdentities().map((slug) => `- \`npx shadcn add @uiforagents/${slug}\``),
+  "",
+  "## Usage",
+  "",
+  "Attach the identity's prompt-pack to every agent building UI: it is the binding design contract. The full build-with-an-identity flow is the [usage guide](https://uiforagents.com/#how) on the homepage.",
+  "",
+  "## Identities",
+  "",
+  ...loadIdentities().flatMap(({ slug, spec }) => [
+    `- [${spec.title}](${SITE_URL}/identities/${slug}/): ${spec.description}`,
+    `  - Registry payload: ${SITE_URL}/registries/${slug}/${slug}.json`,
+    `  - Prompt-pack: ${SITE_URL}/prompt-packs/${slug}.md`,
+    `  - Identity spec: ${SITE_URL}/identities/${slug}.json`,
+  ]),
+  "",
+  "## Agent surfaces",
+  "",
+  `- llms.txt: ${SITE_URL}/llms.txt`,
+  "- GitHub: https://github.com/peteretelej/uiforagents",
+];
+await writeFile(dist("llms.txt"), llms.join("\n") + "\n");
+
 const slugs = listIdentities();
-console.log(`published: demo/, registries/{${slugs.join(",")}}/, prompt-packs/{${slugs.join(",")}}.md, identities/{${slugs.join(",")}}.json`);
+console.log(`published: registries/{${slugs.join(",")}}/, prompt-packs/{${slugs.join(",")}}.md, identities/{${slugs.join(",")}}.json, llms.txt`);

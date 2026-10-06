@@ -23,6 +23,12 @@ const installConfig = JSON.stringify(
   null,
   2
 );
+const importExample = `@import "tailwindcss";
+@import "./identities/ocean-calm/theme/theme.css";
+@import "./identities/ocean-calm/overrides/overrides.css";`;
+const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
+  <!-- your app -->
+</div>`;
 ---
 <Base>
   <div class="container">
@@ -44,33 +50,52 @@ const installConfig = JSON.stringify(
       <div class="section-head">
         <p class="eyebrow">The catalogue</p>
         <h2>Three identities, ready to ship</h2>
-        <p>Every card below is live: it carries its identity's own color. Open one for a working demo, install commands, and the agent prompt-pack.</p>
+        <p>Every card below is live: it carries its identity's own color. Open one to see its full suite, install commands, and the agent prompt-pack.</p>
       </div>
       <div class="identity-grid">
         {identities.map((identity) => <IdentityCard {identity} />)}
       </div>
     </section>
 
-    <section class="section" id="how" aria-label="How it works">
+    <section class="section" id="how" aria-label="Usage guide">
       <div class="section-head">
-        <p class="eyebrow">How it works</p>
-        <h2>From decision to shipped UI in three steps</h2>
+        <p class="eyebrow">Usage guide</p>
+        <h2>Build with an identity</h2>
+        <p>The whole flow, start to finish. Point your agent at this section - it doubles as the binding instructions.</p>
       </div>
       <div class="steps">
         <div class="step">
           <span class="num">01</span>
-          <h3>Pick an identity</h3>
-          <p>Each identity is a complete design system: theme tokens, component treatments, composed blocks, fonts, and motion defaults. The design decisions are already made.</p>
+          <h3>Read the prompt-pack first</h3>
+          <p>Each identity's <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, do/don'ts. Follow it exactly - no visual improvisation.</p>
         </div>
         <div class="step">
           <span class="num">02</span>
-          <h3>Install with one command</h3>
-          <p>Identities are shadcn registry payloads. Add one with a URL, or register the <code>@uiforagents</code> namespace once and install by name.</p>
+          <h3>Install the identity</h3>
+          <pre class="code-block"><code>{installCmd}</code></pre>
+          <p>Or register the <code>@uiforagents</code> namespace once (see Install below) and add by name.</p>
         </div>
         <div class="step">
           <span class="num">03</span>
-          <h3>Hand your agent the prompt-pack</h3>
-          <p>Attach the identity's prompt-pack.md to every agent building UI. It settles typography, color, density, and do/don'ts - the agent stops improvising design and starts shipping.</p>
+          <h3>Import theme and overrides after Tailwind</h3>
+          <p>In your Tailwind entry, import the identity's <code>theme/theme.css</code> AND <code>overrides/overrides.css</code>, after the Tailwind import:</p>
+          <pre class="code-block"><code>{importExample}</code></pre>
+        </div>
+        <div class="step">
+          <span class="num">04</span>
+          <h3>Start from blocks, adapt content</h3>
+          <p>Compose pages from the identity's <code>blocks/*.tsx</code> and swap in your content. Brand happens through tokens and your logo - never by restyling identity components per project.</p>
+        </div>
+        <div class="step">
+          <span class="num">05</span>
+          <h3>Carry both attributes on the root</h3>
+          <p>Put <code>data-theme="&lt;slug&gt;"</code> and <code>data-identity="&lt;slug&gt;"</code> on the same identity root element. Theme tokens key on <code>[data-theme]</code> - nairobi-noon ships no other scope - and overrides key on <code>[data-identity]</code>. With only one attribute, half the system stays dormant.</p>
+          <pre class="code-block"><code>{rootExample}</code></pre>
+        </div>
+        <div class="step">
+          <span class="num">06</span>
+          <h3>Install fonts via @fontsource</h3>
+          <p>Identities name their fonts in the spec and prompt-pack; install them as <code>@fontsource</code> packages and import the weights the pack lists.</p>
         </div>
       </div>
     </section>
@@ -97,10 +122,15 @@ const installConfig = JSON.stringify(
     <section class="section" id="agents" aria-label="For agents">
       <div class="section-head">
         <p class="eyebrow">For agents</p>
-        <h2>The prompt-pack is the integration</h2>
-        <p>Humans pick the identity; agents build with it. Two artifacts make that work.</p>
+        <h2>Every surface is machine-readable</h2>
+        <p>Humans pick the identity; agents build with it. These surfaces are the whole integration - start from llms.txt.</p>
       </div>
       <div class="spec-grid">
+        <div class="spec-card">
+          <h3>llms.txt</h3>
+          <p class="desc" style="font-size:14px;color:var(--text-muted);">The agent front door: the catalogue, install commands, and every surface in one index. Point any agent at it to bootstrap the workflow.</p>
+          <a href="/llms.txt">Fetch llms.txt →</a>
+        </div>
         <div class="spec-card">
           <h3>Agent prompt-pack</h3>
           <p class="desc" style="font-size:14px;color:var(--text-muted);">A markdown contract attached to every agent building UI: fonts, color rules, density, spacing, motion, and do/don'ts. It is the difference between "make it look nice" and a premium result.</p>

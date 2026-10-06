@@ -8,35 +8,35 @@ prompt-pack your agent follows.
 ## Status
 
 Live catalogue: landing gallery, three identity pages (ocean-calm, nairobi-noon,
-graphite-terminal) with a working demo, the launch post, and statically published
-agent surfaces (registries, prompt-packs, identity specs).
+graphite-terminal) with their full block suites, the launch post, and statically
+published agent surfaces (llms.txt, registries, prompt-packs, identity specs).
 
 ## Develop
 
 ```sh
 npm install
-npm run dev       # astro dev (the /demo iframe needs a build; run one first)
-npm run build     # astro build + publish demo/registries/prompt-packs into dist/
+npm run dev       # astro dev
+npm run build     # astro build + publish agent surfaces into dist/
 npm run preview   # serve dist/
 ```
 
 The build reads the sibling identities repo (checked out or cloned next to this
 directory as `uiforagents/`; CI recreates the same layout). It is a read-only
-input: identities, prompt-packs, and registry payloads are read from it, and the
-example app builds straight into `dist/demo/`. The example app needs its
-dependencies installed in the sibling repo first (`npm ci` there).
+input read as plain files: identities, prompt-packs, and registry payloads come
+from it. No install is needed in the sibling repo.
 
 Pipeline: Astro static output + Cloudflare Workers Static Assets (wrangler).
 
 ## Publishing
 
-`npm run build` publishes, per identity `<slug>`:
+`npm run build` publishes:
 
-- `/registries/<slug>/<slug>.json` + `/registries/<slug>/registry.json` (shadcn
-  registry item and index)
-- `/prompt-packs/<slug>.md` (raw agent prompt-pack)
-- `/identities/<slug>.json` (identity spec)
-- `/demo/` (the shared example app; identity switching via `?identity=<slug>`)
+- `/llms.txt` (generated agent front door: catalogue, install, surface index)
+- per identity `<slug>`:
+  - `/registries/<slug>/<slug>.json` + `/registries/<slug>/registry.json` (shadcn
+    registry item and index)
+  - `/prompt-packs/<slug>.md` (raw agent prompt-pack)
+  - `/identities/<slug>.json` (identity spec)
 
 ## License
 
