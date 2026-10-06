@@ -324,7 +324,7 @@ const stackRows = [
             <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">{installNote}</p>
           </div>
           <div class="min-w-0">
-            <h3 class="font-display text-[15px] font-bold">Or register the namespace<span class="ml-2 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-mono font-normal text-muted-foreground">components.json</span></h3>
+            <h3 class="font-display text-[15px] font-bold">Or register the namespace<span class="ml-2 rounded-full border border-border px-2 py-0.5 text-[12px] font-mono font-normal text-muted-foreground">components.json</span></h3>
             <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[13px] leading-relaxed"><code>{installConfig}</code></pre>
             <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">Then: <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[12px]">npx shadcn add @uiforagents/{slug}</code>. Import the theme in your global CSS after Tailwind, per the registry payload.</p>
           </div>
@@ -419,8 +419,11 @@ const stackRows = [
     .prompt-pack th, .prompt-pack td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
 
     /* Scroll affordance for every code surface in the identity scope: thin
-       scrollbar plus a right-edge fade so clipped code reads as scrollable. */
-    [data-identity] pre { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-    [data-identity] pre > code { mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
+       scrollbar always; right-edge fade ONLY while the block overflows
+       (scroll-state query), so fitting code is never faded. */
+    [data-identity] pre { scrollbar-width: thin; scrollbar-color: var(--border) transparent; container-type: scroll-state; }
+    @container scroll-state(scrollable: inline-end) {
+      [data-identity] pre > code { mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
+    }
   </style>
 </Base>
