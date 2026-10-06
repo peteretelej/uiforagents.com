@@ -13,11 +13,11 @@ import "../styles/site.css";
 
 const identities = loadIdentities();
 
-const installCmd = `npx shadcn add https://uiforagents.com/registries/ocean-calm/ocean-calm.json`;
+const installCmd = `npx shadcn add https://uiforagents.com/r/ocean-calm.json`;
 const installConfig = JSON.stringify(
   {
     registries: {
-      "@uiforagents": "https://uiforagents.com/registries/{name}/{name}.json",
+      "@uiforagents": "https://uiforagents.com/r/{name}.json",
     },
   },
   null,
@@ -33,7 +33,7 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
 <Base>
   <div class="container">
     <section class="hero">
-      <p class="eyebrow">uiforagents</p>
+      <p class="eyebrow">Open-source design systems</p>
       <h1>Design identities for agent-built apps</h1>
       <p class="lede">
         Complete, opinionated design systems on shadcn/ui - tokens, component treatments, blocks,
@@ -42,7 +42,7 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#identities">Browse identities</a>
-        <a class="btn btn-ghost" href="#how">How it works</a>
+        <a class="btn btn-ghost" href="#how">Usage guide</a>
       </div>
     </section>
 

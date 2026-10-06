@@ -14,11 +14,17 @@ const dist = (rest) => fileURLToPath(new URL(`dist/${rest}`, SITE_ROOT));
 const sibling = (rest) => fileURLToPath(new URL(rest, identitiesRoot()));
 
 // 1-3. Per-identity static surfaces, copied byte-identical from the sibling.
+// /registries/<slug>/<slug>.json is the canonical payload home; /r/<slug>.json
+// is the flat alias the shadcn namespace template resolves (the CLI's
+// String.replace substitutes only the first {name}, so the template must
+// carry exactly one).
 await mkdir(dist("prompt-packs"), { recursive: true });
 await mkdir(dist("identities"), { recursive: true });
+await mkdir(dist("r"), { recursive: true });
 for (const slug of listIdentities()) {
   await mkdir(dist(`registries/${slug}`), { recursive: true });
   await cp(sibling(`identities/${slug}/registry/${slug}.json`), dist(`registries/${slug}/${slug}.json`));
+  await cp(sibling(`identities/${slug}/registry/${slug}.json`), dist(`r/${slug}.json`));
   await cp(sibling(`identities/${slug}/registry/registry.json`), dist(`registries/${slug}/registry.json`));
   await cp(sibling(`identities/${slug}/prompt-pack.md`), dist(`prompt-packs/${slug}.md`));
   await cp(sibling(`identities/${slug}/identity.json`), dist(`identities/${slug}.json`));
@@ -29,7 +35,7 @@ for (const slug of listIdentities()) {
 const installConfig = JSON.stringify(
   {
     registries: {
-      "@uiforagents": `${SITE_URL}/registries/{name}/{name}.json`,
+      "@uiforagents": `${SITE_URL}/r/{name}.json`,
     },
   },
   null,
@@ -44,7 +50,7 @@ const llms = [
   "",
   "Install an identity into any shadcn app by URL:",
   "",
-  ...listIdentities().map((slug) => `- \`npx shadcn add ${SITE_URL}/registries/${slug}/${slug}.json\``),
+  ...listIdentities().map((slug) => `- \`npx shadcn add ${SITE_URL}/r/${slug}.json\``),
   "",
   "Or register the namespace once in components.json, then install by name:",
   "",
@@ -75,4 +81,4 @@ const llms = [
 await writeFile(dist("llms.txt"), llms.join("\n") + "\n");
 
 const slugs = listIdentities();
-console.log(`published: registries/{${slugs.join(",")}}/, prompt-packs/{${slugs.join(",")}}.md, identities/{${slugs.join(",")}}.json, llms.txt`);
+console.log(`published: registries/{${slugs.join(",")}}/, r/{${slugs.join(",")}}.json, prompt-packs/{${slugs.join(",")}}.md, identities/{${slugs.join(",")}}.json, llms.txt`);

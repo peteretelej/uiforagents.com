@@ -75,11 +75,11 @@ const catalogueServices = [
   { id: "ID-04", service: "Agent build", owner: "prompt-pack driven", status: "Passing", tone: "ok", p99: "3,418 runs" },
 ];
 
-const installCmd = `npx shadcn add https://uiforagents.com/registries/${slug}/${slug}.json`;
+const installCmd = `npx shadcn add https://uiforagents.com/r/${slug}.json`;
 const installConfig = JSON.stringify(
   {
     registries: {
-      "@uiforagents": "https://uiforagents.com/registries/{name}/{name}.json",
+      "@uiforagents": "https://uiforagents.com/r/{name}.json",
     },
   },
   null,
@@ -109,12 +109,12 @@ const stackRows = [
 <Base title={`${spec.title} - uiforagents identity`} description={spec.description} identity={{ slug }}>
   <div class="mx-auto max-w-[1120px] px-6">
       <header class="pt-12">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Identity</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Identity</p>
         <h1 class="mt-3 font-display text-[clamp(32px,4.5vw,44px)] font-extrabold leading-[1.08] tracking-[-0.03em]">{spec.title}</h1>
         <p class="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-muted-foreground">{spec.description}</p>
         <div class="mt-4 flex flex-wrap gap-2">
           {spec.vibe.map((tag) => (
-            <Badge variant="secondary" class="rounded-full px-3 py-1 text-[11.5px]">{tag}</Badge>
+            <Badge variant="secondary" class="rounded-full px-3 py-1 text-[12px]">{tag}</Badge>
           ))}
         </div>
         <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
@@ -125,22 +125,23 @@ const stackRows = [
       </header>
 
       <section class="pt-12" aria-label="Identity switcher">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Switcher</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Switcher</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Every identity, one click away</h2>
-        <div class="mt-5 grid gap-4 sm:grid-cols-3">
+        <div class="mt-5 grid gap-3 sm:grid-cols-3 sm:gap-4">
           {identities.map((i) => (
             <a
               href={`/identities/${i.slug}/`}
               aria-current={i.slug === slug ? "page" : undefined}
               class:list={[
-                "rounded-[14px] border bg-card p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-identity)]",
+                "flex items-center justify-between gap-3 rounded-full border bg-card px-4 py-2.5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-identity)]",
+                "sm:flex-col sm:items-stretch sm:justify-start sm:rounded-[14px] sm:p-5",
                 i.slug === slug ? "border-primary shadow-[var(--shadow-identity)]" : "border-border",
               ]}
             >
-              <span class="font-display text-[17px] font-bold">{i.spec.title}</span>
-              <span class="mt-1 block font-mono text-[12.5px] text-muted-foreground">{i.slug}</span>
+              <span class="font-display text-[15px] font-bold sm:text-[17px]">{i.spec.title}</span>
+              <span class="hidden font-mono text-[12.5px] text-muted-foreground sm:mt-1 sm:block">{i.slug}</span>
               {i.slug === slug && (
-                <Badge class="mt-3">viewing</Badge>
+                <Badge class="mt-0 shrink-0 sm:mt-3">viewing</Badge>
               )}
             </a>
           ))}
@@ -148,7 +149,7 @@ const stackRows = [
       </section>
 
       <section class="pt-14" aria-label="UI primitives">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">UI primitives, live</h2>
         <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five shadcn primitives as this identity ships them - same components, its tokens and treatments.</p>
         <div class="mt-5 grid gap-4 md:grid-cols-2">
@@ -203,7 +204,7 @@ const stackRows = [
 
     <section class="pt-14" aria-label="Blocks">
       <div class="mx-auto max-w-[1120px] px-6">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Blocks, rendered live</h2>
         <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five blocks every install ships, server-rendered in this identity with uiforagents content.</p>
       </div>
@@ -314,24 +315,24 @@ const stackRows = [
 
     <div class="mx-auto max-w-[1120px] px-6 pb-16">
       <section class="pt-14" aria-label="Install">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Install</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Install</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Add {slug} to your app</h2>
         <div class="mt-5 grid gap-5 lg:grid-cols-2">
           <div class="min-w-0">
             <h3 class="font-display text-[15px] font-bold">Install by URL</h3>
-            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[12.5px] leading-relaxed"><code>{installCmd}</code></pre>
+            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[13px] leading-relaxed"><code>{installCmd}</code></pre>
             <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">{installNote}</p>
           </div>
           <div class="min-w-0">
             <h3 class="font-display text-[15px] font-bold">Or register the namespace<span class="ml-2 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-mono font-normal text-muted-foreground">components.json</span></h3>
-            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[12.5px] leading-relaxed"><code>{installConfig}</code></pre>
+            <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[13px] leading-relaxed"><code>{installConfig}</code></pre>
             <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">Then: <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[12px]">npx shadcn add @uiforagents/{slug}</code>. Import the theme in your global CSS after Tailwind, per the registry payload.</p>
           </div>
         </div>
       </section>
 
       <section class="pt-14" aria-label="Agent prompt-pack">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Agent prompt-pack</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Agent prompt-pack</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">The contract your agent follows</h2>
         <p class="mt-1.5 text-[15px] text-muted-foreground">Attach <a class="font-semibold text-primary underline underline-offset-4" href={`/prompt-packs/${slug}.md`}>prompt-pack.md</a> (raw) to every agent building UI with this identity.</p>
         <div class="prompt-pack mt-5 rounded-[14px] border border-border bg-card p-6 lg:p-8">
@@ -340,7 +341,7 @@ const stackRows = [
       </section>
 
       <section class="pt-14" aria-label="Spec and license">
-        <p class="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-primary">Spec</p>
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Spec</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Versions, stack, license</h2>
         <div class="mt-5 grid gap-4 md:grid-cols-3">
           <Card class="rounded-[14px]">
@@ -395,24 +396,31 @@ const stackRows = [
     [data-identity] .font-sans { font-family: var(--font-sans); }
     [data-identity] .font-mono { font-family: var(--font-mono); }
 
-    /* Prompt-pack prose, token-styled (markdown renders without scope attrs). */
-    .prompt-pack { font-size: 15px; line-height: 1.65; }
-    .prompt-pack h1 { font-family: var(--font-display); font-size: 23px; letter-spacing: -0.01em; }
-    .prompt-pack h2 { font-family: var(--font-display); font-size: 19px; margin: 1.8rem 0 0.5rem; letter-spacing: -0.01em; }
-    .prompt-pack h3 { font-family: var(--font-display); font-size: 16px; margin: 1.4rem 0 0.4rem; }
-    .prompt-pack p { margin: 0.7rem 0; }
-    .prompt-pack ul, .prompt-pack ol { margin: 0.7rem 0 0.7rem 1.25rem; }
+    /* Prompt-pack prose, token-styled (markdown renders without scope attrs).
+       Type scale is deliberately tighter than page headings so the pack reads
+       as a dense contract, not a second page. */
+    .prompt-pack { font-size: 14.5px; line-height: 1.6; }
+    .prompt-pack h1 { font-family: var(--font-display); font-size: 20px; letter-spacing: -0.01em; }
+    .prompt-pack h2 { font-family: var(--font-display); font-size: 17px; margin: 1.3rem 0 0.4rem; letter-spacing: -0.01em; }
+    .prompt-pack h3 { font-family: var(--font-display); font-size: 15px; margin: 1rem 0 0.35rem; }
+    .prompt-pack p { margin: 0.55rem 0; }
+    .prompt-pack ul, .prompt-pack ol { margin: 0.55rem 0 0.55rem 1.25rem; }
     .prompt-pack ul { list-style: disc; }
     .prompt-pack ol { list-style: decimal; }
-    .prompt-pack li { margin: 0.3rem 0; }
+    .prompt-pack li { margin: 0.25rem 0; }
     .prompt-pack strong { font-weight: 600; }
     .prompt-pack code { font-family: var(--font-mono); font-size: 0.85em; background: var(--secondary); border: 1px solid var(--border); border-radius: 6px; padding: 0.1em 0.35em; }
-    .prompt-pack pre { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; margin: 1rem 0; }
-    .prompt-pack pre code { background: none; border: none; padding: 0; font-size: 12.5px; }
+    .prompt-pack pre { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; margin: 0.85rem 0; }
+    .prompt-pack pre code { background: none; border: none; padding: 0; font-size: 13px; }
     .prompt-pack a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
-    .prompt-pack blockquote { border-left: 3px solid var(--primary); padding-left: 14px; color: var(--muted-foreground); margin: 1rem 0; }
-    .prompt-pack hr { border: 0; border-top: 1px solid var(--border); margin: 1.8rem 0; }
-    .prompt-pack table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+    .prompt-pack blockquote { border-left: 3px solid var(--primary); padding-left: 14px; color: var(--muted-foreground); margin: 0.85rem 0; }
+    .prompt-pack hr { border: 0; border-top: 1px solid var(--border); margin: 1.3rem 0; }
+    .prompt-pack table { width: 100%; border-collapse: collapse; margin: 0.85rem 0; font-variant-numeric: tabular-nums; font-size: 13px; }
     .prompt-pack th, .prompt-pack td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+
+    /* Scroll affordance for every code surface in the identity scope: thin
+       scrollbar plus a right-edge fade so clipped code reads as scrollable. */
+    [data-identity] pre { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    [data-identity] pre > code { mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
   </style>
 </Base>
