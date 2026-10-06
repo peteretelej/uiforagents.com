@@ -68,6 +68,11 @@ export default defineConfig({
         // Identity blocks import "#sibling/<slug>/blocks/<name>" at build time.
         "#sibling": siblingIdentities,
       },
+      // Sibling blocks live outside the site tree, so bare imports
+      // (react, react/jsx-runtime, lucide-react) resolve by walking up
+      // from the kit dir and miss the site's node_modules. dedupe pins
+      // them to the site root; subpath imports dedupe by package name.
+      dedupe: ["lucide-react", "react"],
     },
     plugins: [tailwindcss()],
   },
