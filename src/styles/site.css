@@ -1082,11 +1082,28 @@ a:hover {
 .manual-fallback .steps { padding: 6px 0 18px; }
 
 .skill-examples {
-  margin: 8px 0 12px;
-  padding-left: 20px;
+  margin: 4px 0 12px;
+  display: grid;
+  gap: 7px;
+}
+
+.skill-example {
+  font-family: var(--font-mono);
+  font-size: 13px;
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.7;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 9px 13px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.skill-example .prefix {
+  color: var(--accent);
+  font-weight: 600;
+  margin-right: 8px;
+  user-select: none;
 }
 
 /* Command blocks must stay readable on any background. */

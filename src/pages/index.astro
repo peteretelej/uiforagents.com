@@ -104,10 +104,13 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
       <div class="skill-install">
         <pre class="code-block"><code>npx skills add peteretelej/uiforagents</code></pre>
         <p class="skill-try">That's all you need - the skill picks identities, fetches the files, and follows the design contracts itself. Then ask, for example:</p>
-        <ul class="skill-examples">
-          <li><em>"use Nairobi Noon for this app"</em></li>
-          <li><em>"show me different demos of this site using some of the design identities"</em></li>
-        </ul>
+        <div class="skill-examples">
+          <div class="skill-example"><span class="prefix">/uiforagents</span> use Nairobi Noon for this app</div>
+          <div class="skill-example"><span class="prefix">/uiforagents</span> show me demos of my site with some new looks</div>
+          <div class="skill-example"><span class="prefix">/uiforagents</span> make this report look like Reading Room</div>
+          <div class="skill-example"><span class="prefix">/uiforagents</span> which identity fits a dense internal admin tool?</div>
+          <div class="skill-example"><span class="prefix">/uiforagents</span> restyle my checkout flow with midnight bulletin</div>
+        </div>
         <p class="skill-try">Works with OpenCode, Claude Code, Codex, Cursor, and 70+ more. No agent? <code>npx skills use peteretelej/uiforagents</code> runs a skill once without installing.</p>
       </div>
 
