@@ -79,10 +79,17 @@
          <div><dt>version</dt><dd>${esc(meta.version)}</dd></div>
          <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`;
     const use = lane === "artifact"
-      ? `<pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre>
-         <p>Paste <code>foundation.css</code> into a single <code>&lt;style&gt;</code> block in your page head (or link it) and attach the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> to your agent. The stylesheet is the whole system: tokens, base, components, print, both themes. The page behind this drawer is this identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">Raw demo ↗</a></p>`
-      : `<pre>${esc(meta.install)}</pre>
-         <p>Install into any shadcn app, then attach the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> to your agent - it is the binding design contract. Fetch the <a href="/registries/${esc(slug)}/${esc(slug)}.json">registry payload</a> or the <a href="/identities/${esc(slug)}.json">identity spec</a> directly.</p>`;
+      ? `<ol class="ufa-steps">
+           <li><strong>Get the stylesheet.</strong> <pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre> or <a href="https://uiforagents.com/foundations/${esc(slug)}.css">download foundation.css</a>.</li>
+           <li><strong>Add it to your page.</strong> Paste the whole file into one <code>&lt;style&gt;</code> block in your page head, or link it with <code>&lt;link rel="stylesheet"&gt;</code>. No build step, no npm - one file is the entire system (tokens, base, components, print, both themes).</li>
+           <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: the agent reads it and builds pages that look like this one, without improvising design.</li>
+         </ol>
+         <p class="ufa-note">This page is the identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">View the raw demo ↗</a></p>`
+      : `<ol class="ufa-steps">
+           <li><strong>Install it into your shadcn app.</strong> <pre>${esc(meta.install)}</pre> Or register the <code>@uiforagents</code> namespace once and install by name.</li>
+           <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, and do/don'ts. The agent follows it instead of improvising design.</li>
+         </ol>
+         <p class="ufa-note">Need the raw surfaces? <a href="/registries/${esc(slug)}/${esc(slug)}.json">registry payload</a> · <a href="/identities/${esc(slug)}.json">identity spec</a></p>`;
     drawerBody.innerHTML = `
       <p class="ufa-desc">${esc(meta.description)}</p>
       <div class="ufa-chips"><span class="ufa-chip">${esc(slug)}</span>${vibe}</div>
