@@ -293,7 +293,7 @@
   text-align: center;
 }
 
-.ufa-steps pre { margin: 8px 0 2px; }
+.ufa-steps pre { margin: 8px 0 2px; padding-right: 60px; }
 
 .ufa-note {
   margin: 14px 0 0;
@@ -332,4 +332,22 @@
 .ufa-agents code {
   font: 500 11.5px/1.4 var(--ufa-mono);
   color: var(--ufa-fg);
+}
+
+.ufa-copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: 1px solid var(--ufa-border);
+  border-radius: 6px;
+  background: var(--ufa-bg);
+  color: var(--ufa-muted);
+  font: 500 10.5px/1 var(--ufa-mono);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.ufa-copy:hover {
+  color: var(--ufa-fg);
+  border-color: var(--ufa-accent);
 }

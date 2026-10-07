@@ -83,13 +83,15 @@
          <ol class="ufa-steps">
            <li><strong>Get the stylesheet.</strong> <pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre> or <a href="https://uiforagents.com/foundations/${esc(slug)}.css">download foundation.css</a>.</li>
            <li><strong>Add it to your page.</strong> Paste the whole file into one <code>&lt;style&gt;</code> block in your page head, or link it with <code>&lt;link rel="stylesheet"&gt;</code>. No build step, no npm - one file is the entire system (tokens, base, components, print, both themes).</li>
-           <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: the agent reads it and builds pages that look like this one, without improvising design.</li>
+           <li><strong>Follow the prompt-pack.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, and do/don'ts. Give it to whoever (or whatever agent) builds the page.</li>
          </ol>
          <p class="ufa-note">This page is the identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">View the raw demo ↗</a></p>`
       : `<p class="ufa-agents">Agents: <code>npx skills add peteretelej/uiforagents</code>, then ask for this identity. Human? The steps below work without one.</p>
          <ol class="ufa-steps">
-           <li><strong>Install it into your shadcn app.</strong> <pre>${esc(meta.install)}</pre> Or register the <code>@uiforagents</code> namespace once and install by name.</li>
-           <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, and do/don'ts. The agent follows it instead of improvising design.</li>
+           <li><strong>Install into your shadcn app.</strong> <pre>npx shadcn add https://uiforagents.com/r/${esc(slug)}.json</pre> This adds the theme, component overrides, and blocks to your project. The theme ships as one file: <code>src/identities/${esc(slug)}/theme.css</code>.</li>
+           <li><strong>Import the theme after Tailwind.</strong> In your global stylesheet: <pre>@import "tailwindcss";\n@import "./src/identities/${esc(slug)}/theme.css";</pre> The import order matters: theme tokens must come after Tailwind to win.</li>
+           <li><strong>Scope the identity.</strong> Set <code>data-identity="${esc(slug)}"</code> on your root <code>&lt;html&gt;</code> element - the overrides key on it and stay dormant without it.</li>
+           <li><strong>Build from the blocks.</strong> Start from the installed <code>blocks/*.tsx</code> and swap in your content - never restyle identity components. Install the fonts the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> names (as <code>@fontsource</code> packages), and attach the pack to any agent building UI.</li>
          </ol>
          <p class="ufa-note">Need the raw surfaces? <a href="/registries/${esc(slug)}/${esc(slug)}.json">registry payload</a> · <a href="/identities/${esc(slug)}.json">identity spec</a></p>`;
     drawerBody.innerHTML = `
@@ -254,6 +256,42 @@
   });
 
   // --- Use Identity drawer ------------------------------------------------
+  function wireCopyButtons(root) {
+    root.querySelectorAll("pre").forEach((pre) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ufa-copy";
+      btn.setAttribute("aria-label", "Copy command");
+      btn.textContent = "Copy";
+      pre.style.position = "relative";
+      pre.appendChild(btn);
+    });
+  }
+
+  shell.querySelector(".ufa-drawer-body").addEventListener("click", async (e) => {
+    const btn = e.target.closest(".ufa-copy");
+    if (!btn) return;
+    const text = btn.parentElement.textContent.replace(/Copy$/, "").trim();
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch {
+      // Clipboard API denied (permissions/insecure context): fall back to a
+      // temporary selection + execCommand, which still works nearly everywhere.
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { copied = document.execCommand("copy"); } catch {}
+      ta.remove();
+    }
+    btn.textContent = copied ? "Copied" : "Press Ctrl+C";
+    if (copied) setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+  });
+
   shell.querySelector("[data-ufa-use]")?.addEventListener("click", () => {
     if (!drawerBody.dataset.filled) {
       renderDrawer({
@@ -266,6 +304,7 @@
         install: mount.dataset.install ?? "",
       });
       drawerBody.dataset.filled = "1";
+      wireCopyButtons(drawerBody);
     }
     drawer.classList.toggle("is-open");
   });
