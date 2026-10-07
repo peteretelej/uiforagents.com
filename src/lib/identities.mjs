@@ -64,8 +64,21 @@ const ARTIFACT_SPECS = {
   },
 };
 
-// Pull the palette a card needs out of the scoped token block in theme.css.
-// Every identity declares these in its token block (nairobi-noon and
+// Lane policy: an artifact foundation must pin its lead scheme (:root
+// color-scheme is a single value, never `light dark`), and the metadata
+// map above must agree with it. Keeps themes intentional as the lane grows.
+function assertArtifactLeadScheme(slug, lead) {
+  const css = readFileSync(identityPath(slug, "foundation.css"), "utf8");
+  const match = css.match(/color-scheme:\s*([^;]+);/);
+  const scheme = match && match[1].trim();
+  if (scheme !== lead) {
+    throw new Error(
+      `${slug}: foundation.css pins color-scheme "${scheme}", expected lead scheme "${lead}"`
+    );
+  }
+}
+
+// Pull the palette a card needs out of the scoped token block in theme.css.// Every identity declares these in its token block (nairobi-noon and
 // graphite-terminal intentionally skip :root; ocean-calm keeps it).
 function readPalette(slug) {
   const css = readFileSync(identityPath(slug, "theme/theme.css"), "utf8");
@@ -99,8 +112,8 @@ function readArtifactPalette(slug) {
   return palette;
 }
 
-// React themes declare their lead color scheme (artifact specs carry their
-// own, since foundation's `light dark` default picks no lead).
+// React themes declare their lead color scheme (artifact foundations pin
+// their lead scheme in :root the same way; nothing follows the OS).
 function readLeadScheme(slug) {
   const css = readFileSync(identityPath(slug, "theme/theme.css"), "utf8");
   const match = css.match(/color-scheme:\s*([^;]+);/);
@@ -116,7 +129,7 @@ export function loadIdentity(slug) {
     return {
       slug,
       lane: "artifact",
-      leadScheme: meta.leadScheme,
+      leadScheme: (assertArtifactLeadScheme(slug, meta.leadScheme), meta.leadScheme),
       spec: { title: meta.title, description: meta.description, vibe: meta.vibe },
       palette: readArtifactPalette(slug),
     };
