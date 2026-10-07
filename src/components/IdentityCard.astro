@@ -1,10 +1,13 @@
 ---
 // Live gallery card: carries the identity's own color via inline --id-*
 // custom properties extracted from its theme at build time. The chrome
-// around it stays neutral.
+// around it stays neutral. color-scheme resolves verbatim light-dark()
+// token values (artifact lane) to the identity's lead side; React palettes
+// are plain colors and unaffected.
 const { identity } = Astro.props;
 
 const style = [
+  `color-scheme:${identity.leadScheme}`,
   `--id-bg:${identity.palette.card}`,
   `--id-fg:${identity.palette.foreground}`,
   `--id-accent:${identity.palette.primary}`,
@@ -17,8 +20,16 @@ const style = [
     <h3>{identity.spec.title}</h3>
     <p class="desc">{identity.spec.description}</p>
     <div class="chip-row">
+      {identity.lane === "artifact" && <span class="chip chip-lane">artifact</span>}
       {identity.spec.vibe.map((tag) => <span class="chip">{tag}</span>)}
     </div>
     <span class="go">Open identity →</span>
   </div>
 </a>
+<style>
+  /* Lane tag: reuses the card chip look; uppercase sets it apart from vibe tags. */
+  .chip-lane {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+</style>

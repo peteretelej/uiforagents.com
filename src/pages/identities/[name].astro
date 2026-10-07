@@ -19,6 +19,7 @@ export function getStaticPaths() {
 
 const { identity } = Astro.props;
 const { spec, slug } = identity;
+const artifact = identity.lane === "artifact";
 const {
   Hero,
   AuthCard,
@@ -30,7 +31,7 @@ const {
 const pack = await getEntry("promptPacks", slug);
 const { Content: PromptPack } = await render(pack);
 
-const identities = loadIdentities().map((i) => ({ slug: i.slug, spec: i.spec }));
+const identities = loadIdentities().map((i) => ({ slug: i.slug, lane: i.lane, spec: i.spec }));
 
 // uiforagents-branded sample content, identical across identities. Blocks
 // with prop surfaces take their content from here.
@@ -43,7 +44,7 @@ const brand = {
   primaryCta: "Pick an identity",
   secondaryCta: "See the suite",
   stats: [
-    { value: "3", label: "identities" },
+    { value: "5", label: "identities" },
     { value: "10", label: "components each" },
     { value: "2,580", label: "installs" },
     { value: "3,418", label: "agent builds" },
@@ -106,7 +107,7 @@ const stackRows = [
   ["react", spec.stack?.react],
 ].filter(([, value]) => Boolean(value));
 ---
-<Base title={`${spec.title} - uiforagents identity`} description={spec.description} identity={{ slug }}>
+<Base title={`${spec.title} - uiforagents identity`} description={spec.description} identity={{ slug, lane: identity.lane }}>
   <div class="mx-auto max-w-[1120px] px-6">
       <header class="pt-12">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Identity</p>
@@ -117,11 +118,20 @@ const stackRows = [
             <Badge variant="secondary" class="rounded-full px-3 py-1 text-[12px]">{tag}</Badge>
           ))}
         </div>
-        <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
-          <span><strong class="font-semibold text-foreground">v</strong>{spec.version}</span>
-          <span><strong class="font-semibold text-foreground">registry</strong> {spec.registry}</span>
-          <span><strong class="font-semibold text-foreground">license</strong> {spec.license}</span>
-        </p>
+        {!artifact && (
+          <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
+            <span><strong class="font-semibold text-foreground">v</strong>{spec.version}</span>
+            <span><strong class="font-semibold text-foreground">registry</strong> {spec.registry}</span>
+            <span><strong class="font-semibold text-foreground">license</strong> {spec.license}</span>
+          </p>
+        )}
+        {artifact && (
+          <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
+            <span><strong class="font-semibold text-foreground">lane</strong> pure-CSS artifact</span>
+            <span><strong class="font-semibold text-foreground">lead scheme</strong> {identity.leadScheme}</span>
+            <span><strong class="font-semibold text-foreground">license</strong> Apache-2.0</span>
+          </p>
+        )}
       </header>
 
       <section class="pt-12" aria-label="Identity switcher">
@@ -148,6 +158,7 @@ const stackRows = [
         </div>
       </section>
 
+      {!artifact && (
       <section class="pt-14" aria-label="UI primitives">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">UI primitives, live</h2>
@@ -200,8 +211,41 @@ const stackRows = [
           </div>
         </div>
       </section>
+      )}
+
+      {artifact && (
+      <>
+        <section class="pt-14" aria-label="Live demo">
+          <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Demo</p>
+          <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">The demo, rendered live</h2>
+          <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The identity's demo.html documents the whole system and styles itself with foundation.css only - the same file an agent ships.</p>
+          <div class="mt-5 overflow-hidden rounded-[14px] border border-border bg-card">
+            <iframe src={`/demos/${slug}/`} title={`${spec.title} demo`} loading="lazy" class="block h-[680px] w-full"></iframe>
+          </div>
+        </section>
+
+        <section class="pt-14" aria-label="Foundation stylesheet">
+          <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Foundation</p>
+          <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">One stylesheet is the whole system</h2>
+          <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">Tokens, base typography, components, print rules, and both themes in a single pure-CSS file - no JavaScript, no install step.</p>
+          <div class="mt-5 grid gap-5 lg:grid-cols-2">
+            <div class="min-w-0">
+              <h3 class="font-display text-[15px] font-bold">Download foundation.css</h3>
+              <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[13px] leading-relaxed"><code>{`curl -O https://uiforagents.com/foundations/${slug}.css`}</code></pre>
+              <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground"><a class="font-semibold text-primary underline underline-offset-4" href={`/foundations/${slug}.css`}>foundation.css</a> is copy-ready: paste all of it into one style block in the page head, or keep the file unmodified next to the page.</p>
+            </div>
+            <div class="min-w-0">
+              <h3 class="font-display text-[15px] font-bold">Or link it</h3>
+              <pre class="mt-2 overflow-x-auto rounded-[12px] border border-border bg-card p-4 font-mono text-[13px] leading-relaxed"><code>{`<link rel="stylesheet" href="https://uiforagents.com/foundations/${slug}.css">`}</code></pre>
+              <p class="mt-2 text-[13px] leading-relaxed text-muted-foreground">Page CSS stays unlayered; the foundation is wrapped in <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[12px]">@layer foundation</code>, so your rules win without <code class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[12px]">!important</code>.</p>
+            </div>
+          </div>
+        </section>
+      </>
+      )}
     </div>
 
+    {!artifact && (
     <section class="pt-14" aria-label="Blocks">
       <div class="mx-auto max-w-[1120px] px-6">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
@@ -312,8 +356,10 @@ const stackRows = [
         </div>
       </div>
     </section>
+    )}
 
     <div class="mx-auto max-w-[1120px] px-6 pb-16">
+      {!artifact && (
       <section class="pt-14" aria-label="Install">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Install</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Add {slug} to your app</h2>
@@ -330,6 +376,7 @@ const stackRows = [
           </div>
         </div>
       </section>
+      )}
 
       <section class="pt-14" aria-label="Agent prompt-pack">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Agent prompt-pack</p>
@@ -340,6 +387,7 @@ const stackRows = [
         </div>
       </section>
 
+      {!artifact && (
       <section class="pt-14" aria-label="Spec and license">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Spec</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Versions, stack, license</h2>
@@ -387,6 +435,7 @@ const stackRows = [
           </Card>
         </div>
       </section>
+      )}
     </div>
 
   <style is:global>

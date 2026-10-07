@@ -26,7 +26,11 @@ const identityLinks = listIdentities().map((slug) => ({
   href: `/identities/${slug}/`,
 }));
 const slug = identity?.slug;
-const htmlAttrs = slug ? { "data-theme": slug, "data-identity": slug } : {};
+// Only React-lane pages run the identity-styled shell: their themes key on
+// these attrs. Artifact pages take the site default chrome (the merged
+// root-level theme tokens, no identity re-scope).
+const themed = slug ? identity.lane !== "artifact" : false;
+const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
 ---
 <!doctype html>
 <html lang="en" {...htmlAttrs}>
@@ -41,7 +45,7 @@ const htmlAttrs = slug ? { "data-theme": slug, "data-identity": slug } : {};
   <body>
     {!slug && <a class="skip-link" href="#main">Skip to content</a>}
     {slug ? (
-      <div data-theme={slug} data-identity={slug} class="min-h-screen bg-background text-foreground">
+      <div {...(themed ? { "data-theme": slug, "data-identity": slug } : {})} class="min-h-screen bg-background text-foreground">
         <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[10px] focus:border focus:border-border focus:bg-card focus:px-4 focus:py-2 focus:text-foreground">Skip to content</a>
         <header class="border-b border-border bg-background/95 backdrop-blur">
           <div class="mx-auto flex h-14 max-w-[1120px] items-center gap-6 px-6">
@@ -95,8 +99,12 @@ const htmlAttrs = slug ? { "data-theme": slug, "data-identity": slug } : {};
               <span class="font-semibold">Agents</span>
               <a href="/llms.txt" class="text-muted-foreground transition-colors hover:text-foreground">llms.txt</a>
               <a href={`/prompt-packs/${slug}.md`} class="text-muted-foreground transition-colors hover:text-foreground">prompt-pack.md</a>
-              <a href={`/registries/${slug}/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">registry payload</a>
-              <a href={`/identities/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">identity spec</a>
+              {themed && (
+                <>
+                  <a href={`/registries/${slug}/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">registry payload</a>
+                  <a href={`/identities/${slug}.json`} class="text-muted-foreground transition-colors hover:text-foreground">identity spec</a>
+                </>
+              )}
             </nav>
             <p class="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">© 2026 Peter Etelej. Apache-2.0.</p>
           </div>

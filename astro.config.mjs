@@ -4,7 +4,7 @@ import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { identitiesRoot, identityPath, listIdentities } from "./src/lib/identities.mjs";
+import { identitiesRoot, isReactLane, listIdentities } from "./src/lib/identities.mjs";
 
 // Sibling identities directory, resolved with the same ../ then ../../
 // discovery as identities.mjs (CI layout vs orchestration worktree).
@@ -42,7 +42,9 @@ const identityEntryCss = () => {
     '@import "tailwindcss";',
     ...FONT_IMPORTS.map((p) => `@import "${p}";`),
   ];
-  for (const slug of listIdentities()) {
+  // React-lane themes only: artifact identities style their own pages, not
+  // this entry (their catalogue pages run on the site default chrome).
+  for (const slug of listIdentities().filter((slug) => isReactLane(slug))) {
     lines.push(`@import "#sibling/${slug}/theme/theme.css";`);
     lines.push(`@import "#sibling/${slug}/overrides/overrides.css";`);
   }
