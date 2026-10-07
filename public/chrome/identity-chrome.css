@@ -318,21 +318,58 @@
   .ufa-bar { bottom: 10px; }
 }
 
-.ufa-agents {
-  margin: 0 0 14px;
-  padding: 9px 11px;
+.ufa-skillbox {
+  margin: 0 0 16px;
+  padding: 12px 13px;
+  border: 1px solid var(--ufa-accent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ufa-accent) 6%, var(--ufa-bg));
+}
+
+.ufa-skillbox-title {
+  margin: 0 0 10px;
+  font: 700 12px/1.3 system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--ufa-fg);
+}
+
+.ufa-skillbox pre {
+  background: var(--ufa-bg);
   border: 1px solid var(--ufa-border);
-  border-radius: 9px;
-  background: var(--ufa-surface);
-  font-size: 12.5px;
+  border-radius: 8px;
+  padding: 9px 52px 9px 11px;
+  font: 500 12px/1.5 var(--ufa-mono);
+  color: var(--ufa-fg);
+  overflow-x: auto;
+  margin: 0;
+}
+
+.ufa-skillbox-then {
+  margin: 8px 0 6px;
+  font-size: 12px;
+  color: var(--ufa-muted);
+}
+
+.ufa-skillbox-note {
+  margin: 10px 0 0;
+  font-size: 12px;
   line-height: 1.5;
   color: var(--ufa-muted);
 }
 
-.ufa-agents code {
-  font: 500 11.5px/1.4 var(--ufa-mono);
-  color: var(--ufa-fg);
+.ufa-manual {
+  margin-top: 14px;
+  border-top: 1px solid var(--ufa-border);
 }
+
+.ufa-manual summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font: 600 12.5px/1.3 system-ui, sans-serif;
+  color: var(--ufa-muted);
+}
+
+.ufa-manual[open] summary { border-bottom: 1px solid var(--ufa-border); }
 
 .ufa-copy {
   position: absolute;

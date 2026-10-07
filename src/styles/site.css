@@ -1080,3 +1080,17 @@ a:hover {
 .manual-fallback[open] summary { border-bottom: 1px solid var(--border); }
 
 .manual-fallback .steps { padding: 6px 0 18px; }
+
+.skill-examples {
+  margin: 8px 0 12px;
+  padding-left: 20px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Command blocks must stay readable on any background. */
+.skill-install .code-block,
+.skill-install .code-block code {
+  color: var(--text);
+}

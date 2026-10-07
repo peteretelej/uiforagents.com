@@ -78,22 +78,32 @@
       : `<div><dt>lane</dt><dd>React · shadcn/ui</dd></div>
          <div><dt>version</dt><dd>${esc(meta.version)}</dd></div>
          <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`;
-    const use = lane === "artifact"
-      ? `<p class="ufa-agents">Agents: <code>npx skills add peteretelej/uiforagents</code>, then ask for this identity. Human? The steps below work without one.</p>
-         <ol class="ufa-steps">
+    const skillBox = `<div class="ufa-skillbox">
+  <p class="ufa-skillbox-title">With an agent - this is all you need</p>
+  <pre>npx skills add peteretelej/uiforagents</pre>
+  <p class="ufa-skillbox-then">then ask your agent:</p>
+  <pre>/uiforagents use ${esc(meta.title.toLowerCase())}</pre>
+  <p class="ufa-skillbox-note">The skill picks this identity, fetches its files, and follows its design contract. Nothing below is required.</p>
+</div>`;
+
+    const manual = lane === "artifact"
+      ? `<ol class="ufa-steps">
            <li><strong>Get the stylesheet.</strong> <pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre> or <a href="https://uiforagents.com/foundations/${esc(slug)}.css">download foundation.css</a>.</li>
            <li><strong>Add it to your page.</strong> Paste the whole file into one <code>&lt;style&gt;</code> block in your page head, or link it with <code>&lt;link rel="stylesheet"&gt;</code>. No build step, no npm - one file is the entire system (tokens, base, components, print, both themes).</li>
-           <li><strong>Follow the prompt-pack.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, and do/don'ts. Give it to whoever (or whatever agent) builds the page.</li>
-         </ol>
-         <p class="ufa-note">This page is the identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">View the raw demo ↗</a></p>`
-      : `<p class="ufa-agents">Agents: <code>npx skills add peteretelej/uiforagents</code>, then ask for this identity. Human? The steps below work without one.</p>
-         <ol class="ufa-steps">
+           <li><strong>Follow the prompt-pack.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, and do/don'ts. Give it to whoever builds the page.</li>
+         </ol>`
+      : `<ol class="ufa-steps">
            <li><strong>Install into your shadcn app.</strong> <pre>npx shadcn add https://uiforagents.com/r/${esc(slug)}.json</pre> This adds the theme, component overrides, and blocks to your project. The theme ships as one file: <code>src/identities/${esc(slug)}/theme.css</code>.</li>
-           <li><strong>Import the theme after Tailwind.</strong> In your global stylesheet: <pre>@import "tailwindcss";\n@import "./src/identities/${esc(slug)}/theme.css";</pre> The import order matters: theme tokens must come after Tailwind to win.</li>
+           <li><strong>Import the theme after Tailwind.</strong> In your global stylesheet: <pre>@import "tailwindcss";\n@import "./src/identities/${esc(slug)}/theme.css";</pre> The order matters: theme tokens must come after Tailwind to win.</li>
            <li><strong>Scope the identity.</strong> Set <code>data-identity="${esc(slug)}"</code> on your root <code>&lt;html&gt;</code> element - the overrides key on it and stay dormant without it.</li>
-           <li><strong>Build from the blocks.</strong> Start from the installed <code>blocks/*.tsx</code> and swap in your content - never restyle identity components. Install the fonts the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> names (as <code>@fontsource</code> packages), and attach the pack to any agent building UI.</li>
-         </ol>
-         <p class="ufa-note">Need the raw surfaces? <a href="/registries/${esc(slug)}/${esc(slug)}.json">registry payload</a> · <a href="/identities/${esc(slug)}.json">identity spec</a></p>`;
+           <li><strong>Build from the blocks.</strong> Start from the installed <code>blocks/*.tsx</code> and swap in your content - never restyle identity components. Install the fonts the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> names (as <code>@fontsource</code> packages).</li>
+         </ol>`;
+
+    const use = `${skillBox}
+      <details class="ufa-manual">
+        <summary>Manual method - build it yourself, no agent</summary>
+        ${manual}
+      </details>`;
     drawerBody.innerHTML = `
       <p class="ufa-desc">${esc(meta.description)}</p>
       <div class="ufa-chips"><span class="ufa-chip">${esc(slug)}</span>${vibe}</div>
