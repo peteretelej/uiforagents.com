@@ -47,18 +47,8 @@ for (const { slug, lane } of identities) {
 // 3b. Artifact identity pages: the demo document, published as the identity
 // page with the catalogue chrome overlaid. Injection is string-level on the
 // generated output only - the sibling's demo.html stays byte-identical, and
-// /demos/<slug>/ above still serves the untouched original.
-const chromeCss = await readFile(
-  fileURLToPath(new URL("chrome/identity-chrome.css", import.meta.url)),
-  "utf8"
-);
-const chromeJs = await readFile(
-  fileURLToPath(new URL("chrome/identity-chrome.js", import.meta.url)),
-  "utf8"
-);
-await mkdir(dist("chrome"), { recursive: true });
-await writeFile(dist("chrome/identity-chrome.css"), chromeCss);
-await writeFile(dist("chrome/identity-chrome.js"), chromeJs);
+// /demos/<slug>/ above still serves the untouched original. The chrome
+// itself ships from public/chrome/ (shared with the React-lane pages).
 
 for (const identity of identities.filter((i) => i.lane === "artifact")) {
   const { slug, spec, leadScheme } = identity;
