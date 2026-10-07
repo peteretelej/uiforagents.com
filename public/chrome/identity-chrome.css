@@ -261,7 +261,17 @@
   margin: 18px 0 6px;
 }
 
+/* Full labels on desktop; short ones on mobile. The short span is hidden
+   by default so wide viewports read "Use Identity", narrow read "Use". */
+.ufa-btn .ufa-label-short { display: none; }
+
+.ufa-btn svg {
+  display: block;
+  flex: none;
+}
+
 @media (max-width: 560px) {
-  .ufa-btn .ufa-label { display: none; }
+  .ufa-bar .ufa-label { display: none; }
+  .ufa-btn .ufa-label-short { display: inline; }
   .ufa-bar { bottom: 10px; }
 }

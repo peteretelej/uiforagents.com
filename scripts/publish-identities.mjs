@@ -55,49 +55,10 @@ for (const identity of identities.filter((i) => i.lane === "artifact")) {
   const demo = await readFile(sibling(`identities/${slug}/demo.html`), "utf8");
   const bar = `
 <link rel="stylesheet" href="/chrome/identity-chrome.css">
-<div class="ufa-chrome">
-  <nav class="ufa-bar" data-slug="${slug}" aria-label="Identity catalogue">
-    <a class="ufa-btn" href="/"><span class="ufa-label">uiforagents</span></a>
-    <span class="ufa-sep"></span>
-    <button type="button" class="ufa-btn" data-ufa-search aria-haspopup="dialog">
-      Search identities <span class="ufa-kbd">/</span>
-    </button>
-    <span class="ufa-sep"></span>
-    <a class="ufa-btn" data-ufa-prev title="Previous identity">←</a>
-    <a class="ufa-btn" data-ufa-next title="Next identity">→</a>
-    <span class="ufa-sep"></span>
-    <button type="button" class="ufa-btn" data-ufa-about aria-haspopup="dialog"><span class="ufa-label">About</span></button>
-  </nav>
-
-  <div class="ufa-overlay" role="dialog" aria-modal="true" aria-label="Search identities">
-    <div class="ufa-palette">
-      <input type="search" placeholder="Search identities..." aria-label="Search identities" autocomplete="off">
-      <div class="ufa-results"></div>
-    </div>
-  </div>
-
-  <aside class="ufa-drawer" role="dialog" aria-modal="true" aria-label="About this identity">
-    <div class="ufa-drawer-head">
-      <span class="ufa-title">${spec.title}</span>
-      <button type="button" class="ufa-btn" data-ufa-close aria-label="Close">✕</button>
-    </div>
-    <div class="ufa-drawer-body">
-      <p class="ufa-desc">${spec.description}</p>
-      <div class="ufa-chips">
-        <span class="ufa-chip">${slug}</span>
-        ${spec.vibe.map((tag) => `<span class="ufa-chip">${tag}</span>`).join("")}
-      </div>
-      <dl class="ufa-kv">
-        <div><dt>lane</dt><dd>pure-CSS artifact</dd></div>
-        <div><dt>lead scheme</dt><dd>${leadScheme}</dd></div>
-        <div><dt>license</dt><dd>Apache-2.0</dd></div>
-      </dl>
-      <h4>Use it</h4>
-      <pre>curl -O ${SITE_URL}/foundations/${slug}.css</pre>
-      <p>Paste foundation.css into a single <code>&lt;style&gt;</code> block (or link it) and attach the <a href="/prompt-packs/${slug}.md">prompt-pack</a> to your agent. The page you are on is this identity's own demo, styled by that exact stylesheet. <a href="/demos/${slug}/">Raw demo ↗</a></p>
-    </div>
-  </aside>
-</div>
+<div class="ufa-chrome" data-slug="${slug}" data-lane="artifact"
+     data-title="${spec.title}" data-description="${spec.description}"
+     data-vibe="${spec.vibe.join(",")}" data-lead="${leadScheme}"
+     data-license="Apache-2.0"></div>
 <script src="/chrome/identity-chrome.js" defer></script>
 </body>`;
   const page = demo.replace("</body>", () => bar);

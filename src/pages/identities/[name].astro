@@ -419,48 +419,18 @@ const stackRows = [
   </style>
 
   <link rel="stylesheet" href="/chrome/identity-chrome.css">
-  <div class="ufa-chrome">
-    <nav class="ufa-bar" data-slug={slug} aria-label="Identity catalogue">
-      <a class="ufa-btn" href="/"><span class="ufa-label">uiforagents</span></a>
-      <span class="ufa-sep"></span>
-      <button type="button" class="ufa-btn" data-ufa-search aria-haspopup="dialog">
-        Search identities <span class="ufa-kbd">/</span>
-      </button>
-      <span class="ufa-sep"></span>
-      <a class="ufa-btn" data-ufa-prev title="Previous identity">←</a>
-      <a class="ufa-btn" data-ufa-next title="Next identity">→</a>
-      <span class="ufa-sep"></span>
-      <button type="button" class="ufa-btn" data-ufa-about aria-haspopup="dialog"><span class="ufa-label">About</span></button>
-    </nav>
-
-    <div class="ufa-overlay" role="dialog" aria-modal="true" aria-label="Search identities">
-      <div class="ufa-palette">
-        <input type="search" placeholder="Search identities..." aria-label="Search identities" autocomplete="off">
-        <div class="ufa-results"></div>
-      </div>
-    </div>
-
-    <aside class="ufa-drawer" role="dialog" aria-modal="true" aria-label="About this identity">
-      <div class="ufa-drawer-head">
-        <span class="ufa-title">{spec.title}</span>
-        <button type="button" class="ufa-btn" data-ufa-close aria-label="Close">✕</button>
-      </div>
-      <div class="ufa-drawer-body">
-        <p class="ufa-desc">{spec.description}</p>
-        <div class="ufa-chips">
-          <span class="ufa-chip">{slug}</span>
-          {spec.vibe.map((tag) => <span class="ufa-chip">{tag}</span>)}
-        </div>
-        <dl class="ufa-kv">
-          <div><dt>lane</dt><dd>React · shadcn/ui</dd></div>
-          <div><dt>version</dt><dd>{spec.version}</dd></div>
-          <div><dt>license</dt><dd>{spec.license}</dd></div>
-        </dl>
-        <h4>Use it</h4>
-        <pre>{installCmd}</pre>
-        <p>Attach the <a href={`/prompt-packs/${slug}.md`}>prompt-pack</a> to your agent, or fetch the <a href={`/registries/${slug}/${slug}.json`}>registry payload</a> and the <a href={`/identities/${slug}.json`}>identity spec</a> directly.</p>
-      </div>
-    </aside>
+  <div
+    class="ufa-chrome"
+    data-slug={slug}
+    data-lane="react"
+    data-title={spec.title}
+    data-description={spec.description}
+    data-vibe={spec.vibe.join(",")}
+    data-lead={identity.leadScheme}
+    data-version={spec.version}
+    data-license={spec.license}
+    data-install={installCmd}
+  >
   </div>
   <script is:inline src="/chrome/identity-chrome.js" defer></script>
 </Base>

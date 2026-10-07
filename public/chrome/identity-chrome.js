@@ -1,15 +1,95 @@
-/* uiforagents identity chrome behavior: catalogue metadata lives in
-   IndexedDB (seeded from /identity-metadata.json, stale-while-revalidate),
-   powering quick search and prev/next on artifact identity pages.
-   The artifact page itself is the identity's demo document; this script
-   only drives the injected ufa- chrome. */
+/* uiforagents identity chrome: floating bar, quick search, "Use Identity"
+   drawer. Self-contained on purpose - identity pages are standalone
+   surfaces (artifact pages ARE the demo), so the chrome brings its own
+   tokens and never touches the identity's styles. All classes ufa-.
+
+   The page provides a single mount point carrying the identity's metadata
+   as data attributes; this script renders the whole UI from it:
+
+     <div class="ufa-chrome" data-slug=".." data-title=".." data-description=".."
+          data-vibe="a,b" data-lane="artifact|react" data-lead="dark|light"
+          data-version=".." data-license=".." data-install="npx ..."></div>
+
+   Catalogue metadata (for search and prev/next) lives in IndexedDB, seeded
+   from /identity-metadata.json with stale-while-revalidate. */
 (() => {
-  const bar = document.querySelector(".ufa-bar");
-  if (!bar) return;
-  const slug = bar.dataset.slug;
+  const mount = document.querySelector(".ufa-chrome[data-slug]");
+  if (!mount) return;
+  const slug = mount.dataset.slug;
+  const lane = mount.dataset.lane ?? "react";
   const DB_NAME = "uiforagents";
   const STORE = "identities";
   const META_URL = "/identity-metadata.json";
+
+  const ICONS = {
+    home: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>`,
+    download: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>`,
+  };
+
+  // --- Render the chrome -------------------------------------------------
+  const shell = document.createElement("div");
+  shell.innerHTML = `
+  <nav class="ufa-bar" aria-label="Identity catalogue">
+    <a class="ufa-btn" href="/" aria-label="uiforagents home">${ICONS.home}<span class="ufa-label">uiforagents</span></a>
+    <span class="ufa-sep"></span>
+    <button type="button" class="ufa-btn" data-ufa-search aria-haspopup="dialog">
+      <span class="ufa-label">Search identities</span><span class="ufa-label-short">Search</span> <span class="ufa-kbd">/</span>
+    </button>
+    <span class="ufa-sep"></span>
+    <a class="ufa-btn" data-ufa-prev aria-label="Previous identity">←</a>
+    <a class="ufa-btn" data-ufa-next aria-label="Next identity">→</a>
+    <span class="ufa-sep"></span>
+    <button type="button" class="ufa-btn" data-ufa-use aria-haspopup="dialog">${ICONS.download}<span class="ufa-label">Use Identity</span><span class="ufa-label-short">Use</span></button>
+  </nav>
+
+  <div class="ufa-overlay" role="dialog" aria-modal="true" aria-label="Search identities">
+    <div class="ufa-palette">
+      <input type="search" placeholder="Search identities..." aria-label="Search identities" autocomplete="off">
+      <div class="ufa-results"></div>
+    </div>
+  </div>
+
+  <aside class="ufa-drawer" role="dialog" aria-modal="true" aria-label="Use this identity">
+    <div class="ufa-drawer-head">
+      <span class="ufa-title"></span>
+      <button type="button" class="ufa-btn" data-ufa-close aria-label="Close">✕</button>
+    </div>
+    <div class="ufa-drawer-body"></div>
+  </aside>`;
+  mount.appendChild(shell);
+
+  const bar = shell.querySelector(".ufa-bar");
+  const overlay = shell.querySelector(".ufa-overlay");
+  const drawer = shell.querySelector(".ufa-drawer");
+  const drawerBody = shell.querySelector(".ufa-drawer-body");
+  const input = shell.querySelector(".ufa-palette input");
+  const results = shell.querySelector(".ufa-results");
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // Usage instructions, lane-aware: this drawer IS the "how to use it" UI.
+  function renderDrawer(meta) {
+    shell.querySelector(".ufa-title").textContent = meta.title;
+    const vibe = meta.vibe.map((t) => `<span class="ufa-chip">${esc(t)}</span>`).join("");
+    const kv = lane === "artifact"
+      ? `<div><dt>lane</dt><dd>pure-CSS artifact</dd></div>
+         <div><dt>lead scheme</dt><dd>${esc(meta.leadScheme)}</dd></div>
+         <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`
+      : `<div><dt>lane</dt><dd>React · shadcn/ui</dd></div>
+         <div><dt>version</dt><dd>${esc(meta.version)}</dd></div>
+         <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`;
+    const use = lane === "artifact"
+      ? `<pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre>
+         <p>Paste <code>foundation.css</code> into a single <code>&lt;style&gt;</code> block in your page head (or link it) and attach the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> to your agent. The stylesheet is the whole system: tokens, base, components, print, both themes. The page behind this drawer is this identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">Raw demo ↗</a></p>`
+      : `<pre>${esc(meta.install)}</pre>
+         <p>Install into any shadcn app, then attach the <a href="/prompt-packs/${esc(slug)}.md">prompt-pack</a> to your agent - it is the binding design contract. Fetch the <a href="/registries/${esc(slug)}/${esc(slug)}.json">registry payload</a> or the <a href="/identities/${esc(slug)}.json">identity spec</a> directly.</p>`;
+    drawerBody.innerHTML = `
+      <p class="ufa-desc">${esc(meta.description)}</p>
+      <div class="ufa-chips"><span class="ufa-chip">${esc(slug)}</span>${vibe}</div>
+      <dl class="ufa-kv">${kv}</dl>
+      <h4>Use this identity</h4>
+      ${use}`;
+  }
 
   // --- IndexedDB: identities metadata, cached across pages -------------
   function openDb() {
@@ -82,8 +162,8 @@
     const prev = records[(idx - 1 + records.length) % records.length];
     const next = records[(idx + 1) % records.length];
     for (const [btn, target] of [
-      [bar.querySelector("[data-ufa-prev]"), prev],
-      [bar.querySelector("[data-ufa-next]"), next],
+      [shell.querySelector("[data-ufa-prev]"), prev],
+      [shell.querySelector("[data-ufa-next]"), next],
     ]) {
       if (!btn) continue;
       btn.href = `/identities/${target.slug}/`;
@@ -92,9 +172,6 @@
   });
 
   // --- Quick search palette --------------------------------------------
-  const overlay = document.querySelector(".ufa-overlay");
-  const input = overlay?.querySelector("input");
-  const results = overlay?.querySelector(".ufa-results");
   let active = 0;
   let visible = [];
 
@@ -147,10 +224,10 @@
 
   function closePalette() {
     overlay.classList.remove("is-open");
-    bar.querySelector("[data-ufa-search]")?.focus();
+    shell.querySelector("[data-ufa-search]")?.focus();
   }
 
-  bar.querySelector("[data-ufa-search]")?.addEventListener("click", openPalette);
+  shell.querySelector("[data-ufa-search]")?.addEventListener("click", openPalette);
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) closePalette();
   });
@@ -167,12 +244,23 @@
     else if (e.key === "Escape") closePalette();
   });
 
-  // --- About drawer ------------------------------------------------------
-  const drawer = document.querySelector(".ufa-drawer");
-  bar.querySelector("[data-ufa-about]")?.addEventListener("click", () => {
+  // --- Use Identity drawer ------------------------------------------------
+  shell.querySelector("[data-ufa-use]")?.addEventListener("click", () => {
+    if (!drawerBody.dataset.filled) {
+      renderDrawer({
+        title: mount.dataset.title ?? slug,
+        description: mount.dataset.description ?? "",
+        vibe: (mount.dataset.vibe ?? "").split(",").filter(Boolean),
+        leadScheme: mount.dataset.lead ?? "",
+        version: mount.dataset.version ?? "",
+        license: mount.dataset.license ?? "Apache-2.0",
+        install: mount.dataset.install ?? "",
+      });
+      drawerBody.dataset.filled = "1";
+    }
     drawer.classList.toggle("is-open");
   });
-  drawer?.querySelector("[data-ufa-close]")?.addEventListener("click", () => {
+  shell.querySelector("[data-ufa-close]")?.addEventListener("click", () => {
     drawer.classList.remove("is-open");
   });
   document.addEventListener("keydown", (e) => {
