@@ -1,0 +1,267 @@
+/* uiforagents identity chrome: floating bar, quick search, about drawer.
+   Self-contained on purpose - artifact identity pages are standalone
+   documents (the demo IS the page), so the chrome brings its own tokens and
+   never touches the identity's styles. All classes are ufa- prefixed. */
+
+.ufa-chrome {
+  --ufa-bg: oklch(100% 0 0);
+  --ufa-fg: oklch(20% 0.02 258);
+  --ufa-muted: oklch(50% 0.02 258);
+  --ufa-border: oklch(91% 0.01 258);
+  --ufa-accent: oklch(52% 0.2 258);
+  --ufa-surface: oklch(98% 0.005 258);
+  --ufa-shadow: 0 8px 30px oklch(20% 0.02 258 / 0.18);
+  --ufa-mono: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Floating bar */
+.ufa-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  background: color-mix(in oklab, var(--ufa-bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--ufa-border);
+  border-radius: 999px;
+  box-shadow: var(--ufa-shadow);
+  max-width: calc(100vw - 24px);
+}
+
+.ufa-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ufa-fg);
+  font: 600 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ufa-btn:hover { background: var(--ufa-surface); }
+
+.ufa-btn[aria-pressed="true"],
+.ufa-btn[aria-current="page"] { color: var(--ufa-accent); }
+
+.ufa-btn .ufa-kbd {
+  font: 500 10.5px/1 var(--ufa-mono);
+  color: var(--ufa-muted);
+  border: 1px solid var(--ufa-border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.ufa-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--ufa-border);
+  margin-inline: 3px;
+  flex: none;
+}
+
+/* Search palette */
+.ufa-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483001;
+  background: oklch(20% 0.02 258 / 0.4);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh 16px 16px;
+}
+
+.ufa-overlay.is-open { display: flex; }
+
+.ufa-palette {
+  width: min(560px, 100%);
+  background: var(--ufa-bg);
+  border: 1px solid var(--ufa-border);
+  border-radius: 14px;
+  box-shadow: var(--ufa-shadow);
+  overflow: hidden;
+}
+
+.ufa-palette input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--ufa-border);
+  padding: 14px 16px;
+  font: 500 15px/1.2 system-ui, -apple-system, sans-serif;
+  color: var(--ufa-fg);
+  outline: none;
+  background: var(--ufa-bg);
+}
+
+.ufa-results {
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.ufa-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 9px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ufa-result.is-active,
+.ufa-result:hover { background: var(--ufa-surface); }
+
+.ufa-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 5px;
+  flex: none;
+  background: var(--ufa-accent, oklch(52% 0.2 258));
+}
+
+.ufa-result .ufa-name {
+  font: 600 14px/1.2 system-ui, sans-serif;
+  color: var(--ufa-fg);
+}
+
+.ufa-result .ufa-slug {
+  font: 400 11.5px/1 var(--ufa-mono);
+  color: var(--ufa-muted);
+}
+
+.ufa-result .ufa-lane {
+  margin-left: auto;
+  font: 500 10px/1 var(--ufa-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ufa-muted);
+  border: 1px solid var(--ufa-border);
+  border-radius: 999px;
+  padding: 3px 7px;
+}
+
+.ufa-empty {
+  padding: 22px 16px;
+  text-align: center;
+  font: 400 13.5px/1.4 system-ui, sans-serif;
+  color: var(--ufa-muted);
+}
+
+/* About drawer */
+.ufa-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483001;
+  width: min(380px, 92vw);
+  background: var(--ufa-bg);
+  border-left: 1px solid var(--ufa-border);
+  box-shadow: var(--ufa-shadow);
+  transform: translateX(105%);
+  transition: transform 180ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.ufa-drawer.is-open { transform: translateX(0); }
+
+.ufa-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ufa-border);
+}
+
+.ufa-drawer-head .ufa-title {
+  font: 700 16px/1.2 system-ui, sans-serif;
+  color: var(--ufa-fg);
+}
+
+.ufa-drawer-body {
+  padding: 16px;
+  overflow-y: auto;
+  font: 400 13.5px/1.55 system-ui, sans-serif;
+  color: var(--ufa-fg);
+}
+
+.ufa-drawer-body .ufa-desc { color: var(--ufa-muted); margin: 0 0 14px; }
+
+.ufa-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+
+.ufa-chip {
+  font: 500 11px/1 var(--ufa-mono);
+  color: var(--ufa-muted);
+  border: 1px solid var(--ufa-border);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+
+.ufa-kv { margin: 0 0 16px; }
+
+.ufa-kv div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--ufa-border);
+  font-size: 13px;
+}
+
+.ufa-kv dt {
+  color: var(--ufa-muted);
+  font: 500 11px/1.8 var(--ufa-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ufa-kv dd { margin: 0; text-align: right; }
+
+.ufa-drawer-body pre {
+  background: var(--ufa-surface);
+  border: 1px solid var(--ufa-border);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font: 400 12px/1.5 var(--ufa-mono);
+  overflow-x: auto;
+  margin: 6px 0 14px;
+}
+
+.ufa-drawer-body a {
+  color: var(--ufa-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ufa-drawer-body h4 {
+  font: 700 12px/1 var(--ufa-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ufa-muted);
+  margin: 18px 0 6px;
+}
+
+@media (max-width: 560px) {
+  .ufa-btn .ufa-label { display: none; }
+  .ufa-bar { bottom: 10px; }
+}

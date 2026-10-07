@@ -1,12 +1,16 @@
 // Publishes the identity catalogue's agent surfaces into the build output,
 // per lane: React identities get /registries/<slug>/ (shadcn registry item +
 // per-slug index), /r/<slug>.json, and /identities/<slug>.json (identity
-// specs); artifact identities get /foundations/<slug>.css and
-// /demos/<slug>/index.html. All lanes get /prompt-packs/<slug>.md, plus
-// /llms.txt as the generated agent front door.
+// specs). Artifact identities get /foundations/<slug>.css, /demos/<slug>/
+// (the raw standalone demo), and - critically - /identities/<slug>/ itself:
+// the identity page IS the demo document, generated here from demo.html with
+// a floating catalogue chrome (search / prev-next / about drawer) injected
+// around it. The demo file is never modified; the chrome is an overlay.
+// All lanes get /prompt-packs/<slug>.md, /identity-metadata.json (the
+// catalogue metadata the chrome caches in IndexedDB), and /llms.txt.
 // The sibling identities repo is a read-only input: its plain files are the
 // source for every surface; nothing inside the sibling is written.
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { identitiesRoot, loadIdentities } from "../src/lib/identities.mjs";
 
@@ -39,6 +43,89 @@ for (const { slug, lane } of identities) {
     await cp(sibling(`identities/${slug}/identity.json`), dist(`identities/${slug}.json`));
   }
 }
+
+// 3b. Artifact identity pages: the demo document, published as the identity
+// page with the catalogue chrome overlaid. Injection is string-level on the
+// generated output only - the sibling's demo.html stays byte-identical, and
+// /demos/<slug>/ above still serves the untouched original.
+const chromeCss = await readFile(
+  fileURLToPath(new URL("chrome/identity-chrome.css", import.meta.url)),
+  "utf8"
+);
+const chromeJs = await readFile(
+  fileURLToPath(new URL("chrome/identity-chrome.js", import.meta.url)),
+  "utf8"
+);
+await mkdir(dist("chrome"), { recursive: true });
+await writeFile(dist("chrome/identity-chrome.css"), chromeCss);
+await writeFile(dist("chrome/identity-chrome.js"), chromeJs);
+
+for (const identity of identities.filter((i) => i.lane === "artifact")) {
+  const { slug, spec, leadScheme } = identity;
+  const demo = await readFile(sibling(`identities/${slug}/demo.html`), "utf8");
+  const bar = `
+<link rel="stylesheet" href="/chrome/identity-chrome.css">
+<div class="ufa-chrome">
+  <nav class="ufa-bar" data-slug="${slug}" aria-label="Identity catalogue">
+    <a class="ufa-btn" href="/"><span class="ufa-label">uiforagents</span></a>
+    <span class="ufa-sep"></span>
+    <button type="button" class="ufa-btn" data-ufa-search aria-haspopup="dialog">
+      Search identities <span class="ufa-kbd">/</span>
+    </button>
+    <span class="ufa-sep"></span>
+    <a class="ufa-btn" data-ufa-prev title="Previous identity">←</a>
+    <a class="ufa-btn" data-ufa-next title="Next identity">→</a>
+    <span class="ufa-sep"></span>
+    <button type="button" class="ufa-btn" data-ufa-about aria-haspopup="dialog"><span class="ufa-label">About</span></button>
+  </nav>
+
+  <div class="ufa-overlay" role="dialog" aria-modal="true" aria-label="Search identities">
+    <div class="ufa-palette">
+      <input type="search" placeholder="Search identities..." aria-label="Search identities" autocomplete="off">
+      <div class="ufa-results"></div>
+    </div>
+  </div>
+
+  <aside class="ufa-drawer" role="dialog" aria-modal="true" aria-label="About this identity">
+    <div class="ufa-drawer-head">
+      <span class="ufa-title">${spec.title}</span>
+      <button type="button" class="ufa-btn" data-ufa-close aria-label="Close">✕</button>
+    </div>
+    <div class="ufa-drawer-body">
+      <p class="ufa-desc">${spec.description}</p>
+      <div class="ufa-chips">
+        <span class="ufa-chip">${slug}</span>
+        ${spec.vibe.map((tag) => `<span class="ufa-chip">${tag}</span>`).join("")}
+      </div>
+      <dl class="ufa-kv">
+        <div><dt>lane</dt><dd>pure-CSS artifact</dd></div>
+        <div><dt>lead scheme</dt><dd>${leadScheme}</dd></div>
+        <div><dt>license</dt><dd>Apache-2.0</dd></div>
+      </dl>
+      <h4>Use it</h4>
+      <pre>curl -O ${SITE_URL}/foundations/${slug}.css</pre>
+      <p>Paste foundation.css into a single <code>&lt;style&gt;</code> block (or link it) and attach the <a href="/prompt-packs/${slug}.md">prompt-pack</a> to your agent. The page you are on is this identity's own demo, styled by that exact stylesheet. <a href="/demos/${slug}/">Raw demo ↗</a></p>
+    </div>
+  </aside>
+</div>
+<script src="/chrome/identity-chrome.js" defer></script>
+</body>`;
+  const page = demo.replace("</body>", () => bar);
+  await mkdir(dist(`identities/${slug}`), { recursive: true });
+  await writeFile(dist(`identities/${slug}/index.html`), page);
+}
+
+// 3c. Catalogue metadata: one static JSON the chrome seeds into IndexedDB.
+const metadata = identities.map(({ slug, lane, leadScheme, spec, palette }) => ({
+  slug,
+  title: spec.title,
+  description: spec.description,
+  lane,
+  vibe: spec.vibe,
+  leadScheme,
+  accent: palette.primary,
+}));
+await writeFile(dist("identity-metadata.json"), JSON.stringify(metadata, null, 2) + "\n");
 
 // 4. llms.txt, generated from the catalogue so new identities appear
 // automatically. The usage guide on the homepage is the canonical flow.
@@ -103,4 +190,4 @@ const llms = [
 ];
 await writeFile(dist("llms.txt"), llms.join("\n") + "\n");
 
-console.log(`published: registries/{${reactSlugs.join(",")}}/, r/{${reactSlugs.join(",")}}.json, identities/{${reactSlugs.join(",")}}.json, prompt-packs/{${identities.map((i) => i.slug).join(",")}}.md, foundations/{${artifactSlugs.join(",")}}.css, demos/{${artifactSlugs.join(",")}}/, llms.txt`);
+console.log(`published: registries/{${reactSlugs.join(",")}}/, r/{${reactSlugs.join(",")}}.json, identities/{${reactSlugs.join(",")}}.json, prompt-packs/{${identities.map((i) => i.slug).join(",")}}.md, foundations/{${artifactSlugs.join(",")}}.css, demos/{${artifactSlugs.join(",")}}/, identities/{${artifactSlugs.join(",")}}/ (demo pages + chrome), identity-metadata.json, llms.txt`);
