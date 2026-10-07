@@ -1,0 +1,34 @@
+---
+// Compact catalogue tile for the full inventory grid. Carries the identity's
+// own color like IdentityCard, but drops the long description: at catalogue
+// scale the detail page owns richness, the tile only has to be scannable.
+// data-* attributes drive the client-side filter bar on the index page.
+const { identity } = Astro.props;
+
+const style = [
+  `color-scheme:${identity.leadScheme}`,
+  `--id-accent:${identity.palette.primary}`,
+  `--id-gradient-to:${identity.palette["identity-gradient-to"]}`,
+].join(";");
+const tags = identity.spec.vibe.slice(0, 2);
+const haystack = [identity.spec.title, identity.spec.description, identity.lane, ...identity.spec.vibe]
+  .join(" ")
+  .toLowerCase();
+---
+<a
+  class="identity-tile"
+  href={`/identities/${identity.slug}/`}
+  style={style}
+  data-lane={identity.lane}
+  data-tags={identity.spec.vibe.join(" ")}
+  data-search={haystack}
+>
+  <span class="tile-swatch" aria-hidden="true"></span>
+  <span class="tile-body">
+    <span class="tile-name">{identity.spec.title}</span>
+    <span class="tile-meta">
+      {identity.lane === "artifact" && <span class="tile-lane">artifact</span>}
+      {tags.map((tag) => <span class="tile-tag">{tag}</span>)}
+    </span>
+  </span>
+</a>

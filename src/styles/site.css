@@ -805,3 +805,214 @@ a:hover {
     transform: none;
   }
 }
+
+/* Full-bleed catalogue section: escapes the page container so the grid can
+   grow with the inventory. Inner width is wider than .container but still
+   capped for very large screens. */
+.catalogue {
+  padding-block: 64px;
+  border-block: 1px solid var(--border);
+  background: color-mix(in oklab, var(--surface) 55%, transparent);
+}
+
+.catalogue-inner {
+  width: min(1440px, 100% - 48px);
+  margin-inline: auto;
+}
+
+.catalogue .section-head {
+  max-width: 720px;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+#identity-search {
+  flex: 1 1 260px;
+  max-width: 360px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+#identity-search:focus-visible {
+  outline-offset: 0;
+}
+
+.lane-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  background: var(--bg);
+}
+
+.lane-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lane-btn.is-active {
+  background: var(--accent);
+  color: oklch(100% 0 0);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-btn {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.tag-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.tag-btn.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, var(--bg));
+}
+
+.result-count {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* Compact inventory tiles: scannable at 100+ scale. Detail stays on the
+   identity page; the tile carries color, name, lane, and at most 2 tags. */
+.identity-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.identity-tile {
+  display: flex;
+  flex-direction: column;  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.identity-tile:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* display:flex would beat the hidden attribute; keep filtering effective */
+.identity-tile[hidden] {
+  display: none;
+}
+
+.tile-swatch {
+  height: 44px;
+  background: linear-gradient(120deg, var(--id-accent, var(--accent)), var(--id-gradient-to, oklch(30% 0.08 258)));
+}
+
+.tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+}
+
+.tile-name {
+  font-family: var(--font-display);
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.tile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tile-lane {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: oklch(100% 0 0);
+}
+
+.tile-tag {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.empty-state {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state p {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}

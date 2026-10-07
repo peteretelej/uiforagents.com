@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import IdentityCard from "../components/IdentityCard.astro";
+import IdentityTile from "../components/IdentityTile.astro";
 import { loadIdentities } from "../lib/identities.mjs";
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
@@ -12,6 +13,10 @@ import "@fontsource/plus-jakarta-sans/latin-800.css";
 import "../styles/site.css";
 
 const identities = loadIdentities();
+const featured = identities.slice(0, 3);
+const lanes = [...new Set(identities.map((i) => i.lane))].sort();
+const tags = [...new Set(identities.flatMap((i) => i.spec.vibe))].sort();
+const catalogueCount = `${identities.length} ${identities.length === 1 ? "identity" : "identities"}`;
 
 const installCmd = `npx shadcn add https://uiforagents.com/r/ocean-calm.json`;
 const installConfig = JSON.stringify(
@@ -46,14 +51,53 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
       </div>
     </section>
 
-    <section class="section" id="identities" aria-label="Identity gallery">
-      <div class="section-head">
-        <p class="eyebrow">The catalogue</p>
-        <h2>Five identities, ready to ship</h2>
-        <p>Every card below is live: it carries its identity's own color. Open one to see its full suite (React) or demo and foundation stylesheet (pure-CSS artifact), and grab its agent prompt-pack.</p>
-      </div>
-      <div class="identity-grid">
-        {identities.map((identity) => <IdentityCard {identity} />)}
+    <section class="catalogue" id="identities" aria-label="Identity catalogue">
+      <div class="catalogue-inner">
+        <div class="section-head">
+          <p class="eyebrow">The catalogue</p>
+          <h2>{catalogueCount}, ready to ship</h2>
+          <p>Every card below is live: it carries its identity's own color. Open one to see its full suite (React) or demo and foundation stylesheet (pure-CSS artifact), and grab its agent prompt-pack.</p>
+        </div>
+
+        <div class="featured-grid">
+          {featured.map((identity) => <IdentityCard {identity} />)}
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Filter identities">
+          <div class="filter-row">
+            <input
+              type="search"
+              id="identity-search"
+              placeholder="Search identities..."
+              aria-label="Search identities"
+              autocomplete="off"
+            />
+            <div class="lane-toggle" role="group" aria-label="Filter by lane">
+              <button type="button" class="lane-btn is-active" data-lane="all" aria-pressed="true">All</button>
+              {lanes.map((lane) => (
+                <button type="button" class="lane-btn" data-lane={lane} aria-pressed="false">{lane}</button>
+              ))}
+            </div>
+          </div>
+          <div class="tag-row" role="group" aria-label="Filter by vibe">
+            {tags.map((tag) => (
+              <button type="button" class="tag-btn" data-tag={tag} aria-pressed="false">{tag}</button>
+            ))}
+          </div>
+        </div>
+
+        <p class="result-count" id="identity-count" aria-live="polite">
+          Showing all {identities.length} {identities.length === 1 ? "identity" : "identities"}
+        </p>
+
+        <div class="identity-tiles" id="identity-grid">
+          {identities.map((identity) => <IdentityTile {identity} />)}
+        </div>
+
+        <div class="empty-state" id="identity-empty" hidden>
+          <p>No identities match those filters.</p>
+          <button type="button" class="btn btn-ghost" id="identity-clear">Clear filters</button>
+        </div>
       </div>
     </section>
 
@@ -150,3 +194,84 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
     </section>
   </div>
 </Base>
+
+<script>
+  // Client-side catalogue filtering. State lives in the URL (q, lane, tag) so
+  // filtered views are shareable; the DOM is fully rendered at build time.
+  const grid = document.getElementById("identity-grid");
+  const empty = document.getElementById("identity-empty");
+  const count = document.getElementById("identity-count");
+  const search = document.getElementById("identity-search") as HTMLInputElement | null;
+  const clear = document.getElementById("identity-clear");
+  if (grid && empty && count && search) {
+    const tiles = Array.from(grid.querySelectorAll<HTMLElement>(".identity-tile"));
+    const laneBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".lane-btn"));
+    const tagBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".tag-btn"));
+    const state = { q: "", lane: "all", tag: "" };
+
+    const total = tiles.length;
+    const noun = total === 1 ? "identity" : "identities";
+
+    function apply() {
+      let shown = 0;
+      for (const tile of tiles) {
+        const matchLane = state.lane === "all" || tile.dataset.lane === state.lane;
+        const matchTag = !state.tag || (tile.dataset.tags ?? "").split(" ").includes(state.tag);
+        const matchQ = !state.q || (tile.dataset.search ?? "").includes(state.q);
+        const show = matchLane && matchTag && matchQ;
+        tile.hidden = !show;
+        if (show) shown++;
+      }
+      count.textContent =
+        shown === total ? `Showing all ${total} ${noun}` : `Showing ${shown} of ${total} ${noun}`;
+      empty.hidden = shown !== 0;
+      laneBtns.forEach((b) => {
+        const active = b.dataset.lane === state.lane;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+      tagBtns.forEach((b) => {
+        const active = b.dataset.tag === state.tag;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+      const params = new URLSearchParams();
+      if (state.q) params.set("q", state.q);
+      if (state.lane !== "all") params.set("lane", state.lane);
+      if (state.tag) params.set("tag", state.tag);
+      const qs = params.toString();
+      history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+    }
+
+    search.addEventListener("input", () => {
+      state.q = search.value.trim().toLowerCase();
+      apply();
+    });
+    laneBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        state.lane = b.dataset.lane ?? "all";
+        apply();
+      })
+    );
+    tagBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        state.tag = state.tag === b.dataset.tag ? "" : (b.dataset.tag ?? "");
+        apply();
+      })
+    );
+    clear?.addEventListener("click", () => {
+      state.q = "";
+      state.lane = "all";
+      state.tag = "";
+      search.value = "";
+      apply();
+    });
+
+    const params = new URLSearchParams(location.search);
+    state.q = (params.get("q") ?? "").toLowerCase();
+    state.lane = params.get("lane") ?? "all";
+    state.tag = params.get("tag") ?? "";
+    search.value = state.q;
+    apply();
+  }
+</script>
