@@ -824,13 +824,6 @@ a:hover {
   max-width: 720px;
 }
 
-.featured-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
 /* Filter bar */
 .filter-bar {
   display: flex;
@@ -927,7 +920,7 @@ a:hover {
    identity page; the tile carries color, name, lane, and at most 2 tags. */
 .identity-tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 14px;
 }
 
@@ -961,14 +954,26 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 14px 14px;
+  padding: 13px 14px 14px;
+  flex: 1;
 }
 
 .tile-name {
   font-family: var(--font-display);
-  font-size: 15.5px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
+}
+
+.tile-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  flex: 1;
 }
 
 .tile-meta {
@@ -990,11 +995,24 @@ a:hover {
 
 .tile-tag {
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  padding: 2px 8px;
+  font-size: 10.5px;
+  padding: 2px 7px;
   border-radius: 999px;
   border: 1px solid var(--border);
   color: var(--text-muted);
+}
+
+.tile-go {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* display:flex would beat the hidden attribute; keep filtering effective */
+.identity-tile[hidden] {
+  display: none;
 }
 
 .empty-state {

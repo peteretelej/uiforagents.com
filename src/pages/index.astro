@@ -1,6 +1,5 @@
 ---
 import Base from "../layouts/Base.astro";
-import IdentityCard from "../components/IdentityCard.astro";
 import IdentityTile from "../components/IdentityTile.astro";
 import { loadIdentities } from "../lib/identities.mjs";
 import "@fontsource/inter/latin-400.css";
@@ -13,7 +12,6 @@ import "@fontsource/plus-jakarta-sans/latin-800.css";
 import "../styles/site.css";
 
 const identities = loadIdentities();
-const featured = identities.slice(0, 3);
 const lanes = [...new Set(identities.map((i) => i.lane))].sort();
 const tags = [...new Set(identities.flatMap((i) => i.spec.vibe))].sort();
 const catalogueCount = `${identities.length} ${identities.length === 1 ? "identity" : "identities"}`;
@@ -57,10 +55,6 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
           <p class="eyebrow">The catalogue</p>
           <h2>{catalogueCount}, ready to ship</h2>
           <p>Every card below is live: it carries its identity's own color. Open one to see its full suite (React) or demo and foundation stylesheet (pure-CSS artifact), and grab its agent prompt-pack.</p>
-        </div>
-
-        <div class="featured-grid">
-          {featured.map((identity) => <IdentityCard {identity} />)}
         </div>
 
         <div class="filter-bar" role="group" aria-label="Filter identities">
