@@ -79,13 +79,15 @@
          <div><dt>version</dt><dd>${esc(meta.version)}</dd></div>
          <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`;
     const use = lane === "artifact"
-      ? `<ol class="ufa-steps">
+      ? `<p class="ufa-agents">Agents: <code>npx skills add peteretelej/uiforagents</code>, then ask for this identity. Human? The steps below work without one.</p>
+         <ol class="ufa-steps">
            <li><strong>Get the stylesheet.</strong> <pre>curl -O https://uiforagents.com/foundations/${esc(slug)}.css</pre> or <a href="https://uiforagents.com/foundations/${esc(slug)}.css">download foundation.css</a>.</li>
            <li><strong>Add it to your page.</strong> Paste the whole file into one <code>&lt;style&gt;</code> block in your page head, or link it with <code>&lt;link rel="stylesheet"&gt;</code>. No build step, no npm - one file is the entire system (tokens, base, components, print, both themes).</li>
            <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: the agent reads it and builds pages that look like this one, without improvising design.</li>
          </ol>
          <p class="ufa-note">This page is the identity's own demo, styled by that exact stylesheet. <a href="/demos/${esc(slug)}/">View the raw demo ↗</a></p>`
-      : `<ol class="ufa-steps">
+      : `<p class="ufa-agents">Agents: <code>npx skills add peteretelej/uiforagents</code>, then ask for this identity. Human? The steps below work without one.</p>
+         <ol class="ufa-steps">
            <li><strong>Install it into your shadcn app.</strong> <pre>${esc(meta.install)}</pre> Or register the <code>@uiforagents</code> namespace once and install by name.</li>
            <li><strong>Attach the prompt-pack to your agent.</strong> <a href="/prompt-packs/${esc(slug)}.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, and do/don'ts. The agent follows it instead of improvising design.</li>
          </ol>

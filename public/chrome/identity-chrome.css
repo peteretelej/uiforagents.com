@@ -317,3 +317,19 @@
   .ufa-btn .ufa-label-short { display: inline; }
   .ufa-bar { bottom: 10px; }
 }
+
+.ufa-agents {
+  margin: 0 0 14px;
+  padding: 9px 11px;
+  border: 1px solid var(--ufa-border);
+  border-radius: 9px;
+  background: var(--ufa-surface);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ufa-muted);
+}
+
+.ufa-agents code {
+  font: 500 11.5px/1.4 var(--ufa-mono);
+  color: var(--ufa-fg);
+}

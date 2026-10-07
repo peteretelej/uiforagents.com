@@ -1043,3 +1043,40 @@ a:hover {
   overflow: hidden;
   border-block: 1px solid var(--border);
 }
+
+/* Agent-first usage guide */
+.skill-install {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  background: var(--surface);
+  padding: 22px 24px;
+  margin-bottom: 18px;
+}
+
+.skill-install .code-block { margin: 0 0 12px; }
+
+.skill-try {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.manual-fallback {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  background: color-mix(in oklab, var(--surface) 55%, transparent);
+  padding: 0 22px;
+}
+
+.manual-fallback summary {
+  cursor: pointer;
+  padding: 14px 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.manual-fallback[open] summary { border-bottom: 1px solid var(--border); }
+
+.manual-fallback .steps { padding: 6px 0 18px; }

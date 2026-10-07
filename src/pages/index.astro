@@ -27,11 +27,10 @@ const installConfig = JSON.stringify(
   2
 );
 const importExample = `@import "tailwindcss";
-@import "./identities/ocean-calm/theme/theme.css";
-@import "./identities/ocean-calm/overrides/overrides.css";`;
-const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
+@import "./src/identities/ocean-calm/theme.css"; /* one file: theme + overrides */`;
+const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it; add data-theme too for per-element scoping -->
   <!-- your app -->
-</div>`;
+</html>`;
 ---
 <Base>
   <div class="container">
@@ -97,45 +96,54 @@ const rootExample = `<div data-theme="ocean-calm" data-identity="ocean-calm">
 
     <section class="section" id="how" aria-label="Usage guide">
       <div class="section-head">
-        <p class="eyebrow">Usage guide</p>
-        <h2>Build with an identity</h2>
-        <p>The whole flow, start to finish. Point your agent at this section - it doubles as the binding instructions.</p>
+        <p class="eyebrow">Agent-first</p>
+        <h2>Install the skill, then just ask</h2>
+        <p>One install gives any coding agent the whole catalogue: it picks identities from your description, fetches the right files, and follows the design contract - no instructions to relay.</p>
       </div>
-      <div class="steps">
-        <div class="step">
-          <span class="num">01</span>
-          <h3>Read the prompt-pack first</h3>
-          <p>Each identity's <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, do/don'ts. Follow it exactly - no visual improvisation.</p>
-        </div>
-        <div class="step">
-          <span class="num">02</span>
-          <h3>Install the identity</h3>
-          <pre class="code-block"><code>{installCmd}</code></pre>
-          <p>Or register the <code>@uiforagents</code> namespace once (see Install below) and add by name.</p>
-        </div>
-        <div class="step">
-          <span class="num">03</span>
-          <h3>Import theme and overrides after Tailwind</h3>
-          <p>In your Tailwind entry, import the identity's <code>theme/theme.css</code> AND <code>overrides/overrides.css</code>, after the Tailwind import:</p>
-          <pre class="code-block"><code>{importExample}</code></pre>
-        </div>
-        <div class="step">
-          <span class="num">04</span>
-          <h3>Start from blocks, adapt content</h3>
-          <p>Compose pages from the identity's <code>blocks/*.tsx</code> and swap in your content. Brand happens through tokens and your logo - never by restyling identity components per project.</p>
-        </div>
-        <div class="step">
-          <span class="num">05</span>
-          <h3>Carry both attributes on the root</h3>
-          <p>Put <code>data-theme="&lt;slug&gt;"</code> and <code>data-identity="&lt;slug&gt;"</code> on the same identity root element. Theme tokens key on <code>[data-theme]</code> - nairobi-noon ships no other scope - and overrides key on <code>[data-identity]</code>. With only one attribute, half the system stays dormant.</p>
-          <pre class="code-block"><code>{rootExample}</code></pre>
-        </div>
-        <div class="step">
-          <span class="num">06</span>
-          <h3>Install fonts via @fontsource</h3>
-          <p>Identities name their fonts in the spec and prompt-pack; install them as <code>@fontsource</code> packages and import the weights the pack lists.</p>
-        </div>
+
+      <div class="skill-install">
+        <pre class="code-block"><code>npx skills add peteretelej/uiforagents</code></pre>
+        <p class="skill-try">Then ask your agent: <em>"use Nairobi Noon for this app"</em> or <em>"make this report look like Reading Room"</em>. Works with OpenCode, Claude Code, Codex, Cursor, and 70+ more. No agent? <code>npx skills use peteretelej/uiforagents</code> runs a skill once without installing.</p>
       </div>
+
+      <details class="manual-fallback">
+        <summary>Manual path - no agent skill</summary>
+        <div class="steps">
+          <div class="step">
+            <span class="num">01</span>
+            <h3>Read the prompt-pack first</h3>
+            <p>Each identity's <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a> is the binding design contract: fonts, color rules, density, motion, do/don'ts. Follow it exactly - no visual improvisation.</p>
+          </div>
+          <div class="step">
+            <span class="num">02</span>
+            <h3>Install the identity</h3>
+            <pre class="code-block"><code>{installCmd}</code></pre>
+            <p>Or register the <code>@uiforagents</code> namespace once (see Install below) and add by name. Artifact-lane identities have no install step: fetch <code>foundations/&lt;slug&gt;.css</code> and paste or link it.</p>
+          </div>
+          <div class="step">
+            <span class="num">03</span>
+            <h3>Import the identity theme after Tailwind</h3>
+            <p>The install ships one combined theme file (theme + overrides). Import it in your global stylesheet, after the Tailwind import:</p>
+            <pre class="code-block"><code>{importExample}</code></pre>
+          </div>
+          <div class="step">
+            <span class="num">04</span>
+            <h3>Start from blocks, adapt content</h3>
+            <p>Compose pages from the identity's <code>blocks/*.tsx</code> and swap in your content. Brand happens through tokens and your logo - never by restyling identity components per project.</p>
+          </div>
+          <div class="step">
+            <span class="num">05</span>
+            <h3>Carry the identity attribute on the root</h3>
+            <p>Set <code>data-identity="&lt;slug&gt;"</code> on your root html element - overrides key on it. To scope multiple identities inside one app, also set <code>data-theme="&lt;slug&gt;"</code> on each wrapper (theme tokens key on <code>[data-theme]</code>; nairobi-noon ships no other scope).</p>
+            <pre class="code-block"><code>{rootExample}</code></pre>
+          </div>
+          <div class="step">
+            <span class="num">06</span>
+            <h3>Install fonts via @fontsource</h3>
+            <p>Identities name their fonts in the spec and prompt-pack; install them as <code>@fontsource</code> packages and import the weights the pack lists.</p>
+          </div>
+        </div>
+      </details>
     </section>
 
     <section class="section" id="install" aria-label="Install">
