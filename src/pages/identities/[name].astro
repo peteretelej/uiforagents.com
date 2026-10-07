@@ -216,11 +216,16 @@ const stackRows = [
       {artifact && (
       <>
         <section class="pt-14" aria-label="Live demo">
-          <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Demo</p>
-          <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">The demo, rendered live</h2>
-          <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The identity's demo.html documents the whole system and styles itself with foundation.css only - the same file an agent ships.</p>
-          <div class="mt-5 overflow-hidden rounded-[14px] border border-border bg-card">
-            <iframe src={`/demos/${slug}/`} title={`${spec.title} demo`} loading="lazy" class="block h-[680px] w-full"></iframe>
+          <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Demo</p>
+              <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">The demo, rendered live</h2>
+            </div>
+            <a class="font-mono text-[13px] font-semibold text-primary underline underline-offset-4" href={`/demos/${slug}/`}>Open demo full page ↗</a>
+          </div>
+          <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The identity's demo.html documents the whole system and styles itself with foundation.css only - the same file an agent ships. The frame below is that standalone page, unmodified.</p>
+          <div class="demo-bleed mt-5">
+            <iframe src={`/demos/${slug}/`} title={`${spec.title} demo`} loading="lazy" class="block h-[85vh] w-full border-0"></iframe>
           </div>
         </section>
 

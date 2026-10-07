@@ -1016,3 +1016,12 @@ a:hover {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 }
+
+/* Artifact identity pages: the demo frame breaks out to full viewport width
+   so the standalone artifact reads at real scale, not as a card inset. */
+.demo-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  overflow: hidden;
+  border-block: 1px solid var(--border);
+}
