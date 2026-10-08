@@ -21,13 +21,14 @@ const FONT_IMPORTS = [
   "@fontsource/inter/latin-500.css",
   "@fontsource/inter/latin-600.css",
   "@fontsource/inter/latin-700.css",
-  "@fontsource/plus-jakarta-sans/latin-500.css",
+  // No plus-jakarta-sans/jetbrains-mono 500: nothing on identity pages
+  // paints a display or mono face at weight 500 (blocks, overrides, and the
+  // identity template use 400/600/700/800 only).
   "@fontsource/plus-jakarta-sans/latin-600.css",
   "@fontsource/plus-jakarta-sans/latin-700.css",
   "@fontsource/plus-jakarta-sans/latin-800.css",
   "@fontsource/lilita-one/latin-400.css",
   "@fontsource/jetbrains-mono/latin-400.css",
-  "@fontsource/jetbrains-mono/latin-500.css",
   "@fontsource/jetbrains-mono/latin-600.css",
   "@fontsource/jetbrains-mono/latin-700.css",
 ];

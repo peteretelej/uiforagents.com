@@ -120,6 +120,14 @@ function readLeadScheme(slug) {
   return match && match[1].trim() === "dark" ? "dark" : "light";
 }
 
+// Font families an identity's theme declares, for font preloading. System
+// stacks pass through untouched; the fonts lib maps web families to files.
+export function identityFonts(slug) {
+  const css = readFileSync(identityPath(slug, "theme/theme.css"), "utf8");
+  const token = (name) => css.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1]?.trim() ?? "";
+  return { display: token("font-display"), sans: token("font-sans"), mono: token("font-mono") };
+}
+
 export function loadIdentity(slug) {
   if (!isReactLane(slug)) {
     const meta = ARTIFACT_SPECS[slug];

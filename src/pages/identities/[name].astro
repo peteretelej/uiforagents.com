@@ -34,6 +34,18 @@ const {
   Article,
 } = getBlocks(slug);
 
+// Counts and claims on this page derive from data - the catalogue loaders
+// and the identity spec (identity.json is the source of record) - so adding
+// an identity, primitive, or block updates the copy without editing it.
+const identityCount = loadIdentities().length;
+const suitePrimitives = ["Button", "Badge", "Card", "Input", "Label"];
+const blockList = spec.blocks;
+if (!Array.isArray(blockList) || blockList.length === 0) {
+  throw new Error(`Identity "${slug}" declares no block list in identity.json`);
+}
+const countNoun = (n, singular) => `${n} ${n === 1 ? singular : singular}s`;
+const suiteCount = suitePrimitives.length + blockList.length;
+
 const pack = await getEntry("promptPacks", slug);
 const { Content: PromptPack } = await render(pack);
 
@@ -48,8 +60,8 @@ const brand = {
   primaryCta: "Pick an identity",
   secondaryCta: "See the suite",
   stats: [
-    { value: "5", label: "identities" },
-    { value: "10", label: "components each" },
+    { value: String(identityCount), label: identityCount === 1 ? "identity" : "identities" },
+    { value: String(suiteCount), label: `${countNoun(suiteCount, "component")} each` },
     { value: "2,580", label: "installs" },
     { value: "3,418", label: "agent builds" },
   ],
@@ -119,7 +131,7 @@ const stackRows = [
         <p class="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-muted-foreground">{spec.description}</p>
         <div class="mt-4 flex flex-wrap gap-2">
           {spec.vibe.map((tag) => (
-            <Badge variant="secondary" class="rounded-full px-3 py-1 text-[12px]">{tag}</Badge>
+            <Badge variant="secondary" className="rounded-full px-3 py-1 text-[12px]">{tag}</Badge>
           ))}
         </div>
                   <p class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-muted-foreground">
@@ -137,7 +149,7 @@ const stackRows = [
             <section class="pt-14" aria-label="UI primitives">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">UI primitives, live</h2>
-        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five shadcn primitives as this identity ships them - same components, its tokens and treatments.</p>
+        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The {countNoun(suitePrimitives.length, "shadcn primitive")} this identity ships - same components, its tokens and treatments.</p>
         <div class="mt-5 grid gap-4 md:grid-cols-2">
           <div class="rounded-[14px] border border-border bg-card p-6">
             <h3 class="font-display text-[16px] font-bold">Button</h3>
@@ -161,9 +173,9 @@ const stackRows = [
           </div>
           <div class="rounded-[14px] border border-border bg-card p-6">
             <h3 class="font-display text-[16px] font-bold">Card</h3>
-            <Card class="mt-3 rounded-xl">
+            <Card className="mt-3 rounded-xl">
               <CardHeader>
-                <CardTitle class="font-display text-[15px] font-bold">Registry payload</CardTitle>
+                <CardTitle className="font-display text-[15px] font-bold">Registry payload</CardTitle>
                 <CardDescription>Theme, overrides, blocks, and prompt-pack in one install.</CardDescription>
               </CardHeader>
               <CardContent>
@@ -194,14 +206,16 @@ const stackRows = [
       <div class="mx-auto max-w-[1120px] px-6">
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Blocks, rendered live</h2>
-        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The five blocks every install ships, server-rendered in this identity with uiforagents content.</p>
+        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The {countNoun(blockList.length, "block")} every install ships, server-rendered in this identity with uiforagents content.</p>
       </div>
 
       <div class="mx-auto max-w-[1120px] px-6 pt-8">
         <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · hero</p>
         <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.hero}</p>
       </div>
-      <div class="mt-3 rounded-[14px] border border-border bg-card mx-auto max-w-[1120px] md:p-4 overflow-hidden">
+      <!-- Block demos carry their own internal gutters (px-6); the frame adds
+           none, so content aligns identically at every breakpoint. -->
+      <div class="mt-3 rounded-[14px] border border-border bg-card mx-auto max-w-[1120px] overflow-hidden">
         <Hero
           eyebrow={brand.eyebrow}
           title={brand.title}
@@ -213,10 +227,10 @@ const stackRows = [
         />
       </div>
 
-      <div class="mx-auto max-w-[1120px] px-6 pt-10">
+      <div class="mx-auto max-w-[1120px] px-6 pt-8">
         <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · auth</p>
         <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.auth}</p>
-        <div class="mt-3 flex justify-center rounded-[14px] border border-border bg-card px-6 py-10">
+        <div class="mt-3 flex justify-center rounded-[14px] border border-border bg-card px-6 py-8">
           <AuthCard
             title="Sign in to uiforagents"
             description="Agent-built apps deserve agent-grade design."
@@ -225,37 +239,37 @@ const stackRows = [
         </div>
       </div>
 
-      <div class="pt-10">
+      <div class="pt-8">
         <div class="mx-auto max-w-[1120px] px-6">
           <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · dashboard-shell</p>
           <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["dashboard-shell"]}</p>
         </div>
         <div class="mt-3 border-y border-border bg-card overflow-x-auto">
           <DashboardShell title="uiforagents" nav={shellNav} stats={brand.stats}>
-            <div class="grid gap-4 pb-8 lg:grid-cols-3">
-              <Card class="rounded-xl px-5 py-4">
-                <CardTitle class="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
-                <CardDescription class="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
+            <div class="grid gap-4 lg:grid-cols-3">
+              <Card className="rounded-xl px-5 py-4">
+                <CardTitle className="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
+                <CardDescription className="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
               </Card>
-              <Card class="rounded-xl px-5 py-4">
-                <CardTitle class="font-display text-[16px] font-bold">Blocks included</CardTitle>
-                <CardDescription class="mt-1.5">Five composed sections, content adapted per project.</CardDescription>
+              <Card className="rounded-xl px-5 py-4">
+                <CardTitle className="font-display text-[16px] font-bold">Blocks included</CardTitle>
+                <CardDescription className="mt-1.5">{countNoun(blockList.length, "composed section")}, content adapted per project.</CardDescription>
               </Card>
-              <Card class="rounded-xl px-5 py-4">
-                <CardTitle class="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
-                <CardDescription class="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
+              <Card className="rounded-xl px-5 py-4">
+                <CardTitle className="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
+                <CardDescription className="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
               </Card>
             </div>
           </DashboardShell>
         </div>
       </div>
 
-      <div class="pt-10">
+      <div class="pt-8">
         <div class="mx-auto max-w-[1120px] px-6">
           <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · table-page</p>
           <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["table-page"]}</p>
         </div>
-        <div class="mt-3 border-y border-border bg-card pb-8 overflow-x-auto">
+        <div class="mt-3 border-y border-border bg-card overflow-x-auto">
           {slug === "graphite-terminal" ? (
             <TablePage
               title="uiforagents"
@@ -278,7 +292,7 @@ const stackRows = [
         </div>
       </div>
 
-      <div class="mx-auto max-w-[1120px] px-6 pt-10">
+      <div class="mx-auto max-w-[1120px] px-6 pt-8">
         <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · article</p>
         <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.article}</p>
         <div class="mt-3 rounded-[14px] border border-border bg-card">
@@ -335,9 +349,9 @@ const stackRows = [
         <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">Spec</p>
         <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">Versions, stack, license</h2>
         <div class="mt-5 grid gap-4 md:grid-cols-3">
-          <Card class="rounded-[14px]">
+          <Card className="rounded-[14px]">
             <CardHeader>
-              <CardTitle class="font-display text-[15px] font-bold">Tested versions</CardTitle>
+              <CardTitle className="font-display text-[15px] font-bold">Tested versions</CardTitle>
             </CardHeader>
             <CardContent>
               <dl class="grid gap-1.5 text-[13.5px]">
@@ -350,9 +364,9 @@ const stackRows = [
               </dl>
             </CardContent>
           </Card>
-          <Card class="rounded-[14px]">
+          <Card className="rounded-[14px]">
             <CardHeader>
-              <CardTitle class="font-display text-[15px] font-bold">Stack</CardTitle>
+              <CardTitle className="font-display text-[15px] font-bold">Stack</CardTitle>
             </CardHeader>
             <CardContent>
               <dl class="grid gap-1.5 text-[13.5px]">
@@ -365,9 +379,9 @@ const stackRows = [
               </dl>
             </CardContent>
           </Card>
-          <Card class="rounded-[14px]">
+          <Card className="rounded-[14px]">
             <CardHeader>
-              <CardTitle class="font-display text-[15px] font-bold">License</CardTitle>
+              <CardTitle className="font-display text-[15px] font-bold">License</CardTitle>
             </CardHeader>
             <CardContent>
               <p class="text-[13.5px] leading-relaxed text-muted-foreground">

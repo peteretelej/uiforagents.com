@@ -3,7 +3,8 @@
 // over Inter body. Identity color is carried by gallery cards only.
 // Site pages import site.css + the site fonts themselves; identity pages
 // bring their own Tailwind entry, so this layout serves both modes.
-import { listIdentities } from "../lib/identities.mjs";
+import { listIdentities, identityFonts } from "../lib/identities.mjs";
+import { identityPreloads, sitePreloads } from "../lib/fonts";
 
 const {
   title = "uiforagents - design identities for agent-built apps",
@@ -32,6 +33,10 @@ const slug = identity?.slug;
 // root-level theme tokens, no identity re-scope).
 const themed = slug ? identity.lane !== "artifact" : false;
 const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
+// Font preloads kill the @fontsource swap flash: the woff2 fetch starts at
+// HTML parse instead of after CSS + layout, so first paint already has the
+// real faces. Preload set is the first-paint weights only (see lib/fonts).
+const fontPreloads = themed ? identityPreloads(identityFonts(slug)) : sitePreloads;
 ---
 <!doctype html>
 <html lang="en" {...htmlAttrs}>
@@ -42,6 +47,9 @@ const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="generator" content={Astro.generator} />
+    {fontPreloads.map((href) => (
+      <link rel="preload" as="font" type="font/woff2" crossorigin href={href} />
+    ))}
   </head>
   <body>
     {!slug && <a class="skip-link" href="#main">Skip to content</a>}
