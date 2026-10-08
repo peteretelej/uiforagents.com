@@ -38,10 +38,10 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
       <p class="eyebrow">The design system factory</p>
       <h1>Design identities for agent-built apps</h1>
       <p class="lede">
-        Complete, opinionated design systems on shadcn/ui and pure CSS - tokens, component treatments,
-        blocks, fonts, and motion, bundled with the prompt-pack your agent follows. Use an identity
-        as-is, or derive your own from the nearest one when nothing fits: either way, you ship
-        product without making a single design decision.
+        Complete, opinionated design systems in two lanes: shadcn/ui kits for React apps, and pure
+        HTML/CSS foundations for self-contained pages - each bundled with the prompt-pack your
+        agent follows. Use an identity as-is, or derive your own from the nearest one when nothing
+        fits. Either way, you ship without making a single design decision.
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#identities">Browse identities</a>
@@ -129,7 +129,7 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
             <span class="num">02</span>
             <h3>Install the identity</h3>
             <pre class="code-block"><code>{installCmd}</code></pre>
-            <p>Or register the <code>@uiforagents</code> namespace once (see Install below) and add by name. Artifact-lane identities have no install step: fetch <code>foundations/&lt;slug&gt;.css</code> and paste or link it.</p>
+            <p>Or register the <code>@uiforagents</code> namespace once (see Manual install below) and add by name. Artifact-lane identities have no install step: fetch <code>foundations/&lt;slug&gt;.css</code> and paste or link it.</p>
           </div>
           <div class="step">
             <span class="num">03</span>
@@ -157,11 +157,11 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
       </details>
     </section>
 
-    <section class="section" id="install" aria-label="Install">
+    <section class="section" id="install" aria-label="Manual install">
       <div class="section-head">
-        <p class="eyebrow">Install</p>
+        <p class="eyebrow">Manual install</p>
         <h2>One command into any shadcn app</h2>
-        <p>Tailwind v4 + React 18+. Swap the slug in the URL for any identity in the catalogue.</p>
+        <p>Tailwind v4 + React 18+. Swap the slug in the URL for any identity in the catalogue. For a seamless experience, consider <a href="#how">installing the agent skill</a> instead - it picks the identity and does all of this for you.</p>
       </div>
       <div class="stack">
         <div>
