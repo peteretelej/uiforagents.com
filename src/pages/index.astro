@@ -35,15 +35,17 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
 <Base>
   <div class="container">
     <section class="hero">
-      <p class="eyebrow">Open-source design systems</p>
+      <p class="eyebrow">The design system factory</p>
       <h1>Design identities for agent-built apps</h1>
       <p class="lede">
-        Complete, opinionated design systems on shadcn/ui - tokens, component treatments, blocks,
-        fonts, and motion, bundled with the prompt-pack your agent follows. Pick an identity, install
-        it with one command, and ship product without making a single design decision.
+        Complete, opinionated design systems on shadcn/ui and pure CSS - tokens, component treatments,
+        blocks, fonts, and motion, bundled with the prompt-pack your agent follows. Use an identity
+        as-is, or derive your own from the nearest one when nothing fits: either way, you ship
+        product without making a single design decision.
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#identities">Browse identities</a>
+        <a class="btn btn-ghost" href="/derive/">Build your own</a>
         <a class="btn btn-ghost" href="#how">Usage guide</a>
       </div>
     </section>
@@ -98,7 +100,7 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
       <div class="section-head">
         <p class="eyebrow">Agent-first</p>
         <h2>Install the skill, then just ask</h2>
-        <p>One install gives any coding agent the whole catalogue: it picks identities from your description, fetches the right files, and follows the design contract - no instructions to relay.</p>
+        <p>One install gives any coding agent the whole catalogue: it picks identities from your description, fetches the right files, and follows the design contract - no instructions to relay. And when no identity fits, it derives a new system from the nearest one instead of improvising.</p>
       </div>
 
       <div class="skill-install">
@@ -110,6 +112,7 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
           <div class="skill-example"><span class="prefix">/uiforagents</span> make this report look like Reading Room</div>
           <div class="skill-example"><span class="prefix">/uiforagents</span> which identity fits a dense internal admin tool?</div>
           <div class="skill-example"><span class="prefix">/uiforagents</span> restyle my checkout flow with midnight bulletin</div>
+          <div class="skill-example"><span class="prefix">/uiforagents</span> nothing fits this brand - derive a system from ocean-calm with a forest palette</div>
         </div>
         <p class="skill-try">Works with GitHub Copilot, OpenCode, Claude Code, Codex, Cursor, and any other AI agent that supports skills. No agent? <code>npx skills use peteretelej/uiforagents</code> runs a skill once without installing.</p>
       </div>

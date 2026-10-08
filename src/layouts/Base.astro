@@ -15,6 +15,7 @@ const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const navLinks = [
   { href: "/#identities", label: "Identities", match: null },
   { href: "/#how", label: "Usage guide", match: null },
+  { href: "/derive/", label: "Derive", match: "/derive", optional: true },
   { href: "/launch/", label: "Launch", match: "/launch", optional: true },
   { href: "/about/", label: "About", match: "/about", optional: true },
 ];
@@ -79,7 +80,7 @@ const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
           <div class="mx-auto grid max-w-[1120px] gap-8 px-6 py-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_auto_auto]">
             <div class="max-w-[340px]">
               <a href="/" class="font-display text-[17px] font-extrabold tracking-[-0.02em]">uiforagents</a>
-              <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Design identities for agent-built apps. Complete design systems on shadcn/ui, shipped with the prompt-pack your agent follows.</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted-foreground">The design system factory. Use a design identity as-is, or derive your own from one - complete design systems on shadcn/ui and pure CSS, shipped with the prompt-pack your agent follows.</p>
             </div>
             <nav class="flex flex-col gap-2 text-sm" aria-label="Catalogue">
               <span class="font-semibold">Catalogue</span>
@@ -98,6 +99,7 @@ const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
             <nav class="flex flex-col gap-2 text-sm" aria-label="Agents">
               <span class="font-semibold">Agents</span>
               <a href="/llms.txt" class="text-muted-foreground transition-colors hover:text-foreground">llms.txt</a>
+              <a href="/derive/" class="text-muted-foreground transition-colors hover:text-foreground">derive your own</a>
               <a href={`/prompt-packs/${slug}.md`} class="text-muted-foreground transition-colors hover:text-foreground">prompt-pack.md</a>
               {themed && (
                 <>
@@ -129,7 +131,7 @@ const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
         <div class="container inner">
           <div class="group" style="max-width: 340px;">
             <a class="wordmark" href="/">uiforagents</a>
-            <p class="note">Design identities for agent-built apps. Complete design systems on shadcn/ui, shipped with the prompt-pack your agent follows.</p>
+            <p class="note">The design system factory. Use a design identity as-is, or derive your own from one - complete design systems on shadcn/ui and pure CSS, shipped with the prompt-pack your agent follows.</p>
           </div>
           <nav class="group" aria-label="Catalogue">
             <span>Catalogue</span>
@@ -142,6 +144,7 @@ const htmlAttrs = themed ? { "data-theme": slug, "data-identity": slug } : {};
           <nav class="group" aria-label="Agents">
             <span>Agents</span>
             <a href="/llms.txt">llms.txt</a>
+            <a href="/derive/">derive your own</a>
             <a href="/prompt-packs/ocean-calm.md">prompt-pack.md</a>
             <a href="/registries/ocean-calm/ocean-calm.json">registry payload</a>
             <a href="/identities/ocean-calm.json">identity spec</a>
