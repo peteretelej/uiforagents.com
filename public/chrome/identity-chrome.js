@@ -80,7 +80,7 @@
          <div><dt>license</dt><dd>${esc(meta.license)}</dd></div>`;
     const skillBox = `<div class="ufa-skillbox">
   <p class="ufa-skillbox-title">With an agent - this is all you need</p>
-  <pre>npx skills add peteretelej/uiforagents</pre>
+  <pre>npx skills add peteretelej/uiforagents -g</pre>
   <p class="ufa-skillbox-then">then ask your agent:</p>
   <pre>/uiforagents use ${esc(meta.title.toLowerCase())}</pre>
   <p class="ufa-skillbox-note">The skill picks this identity, fetches its files, and follows its design contract. Nothing below is required.</p>
