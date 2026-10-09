@@ -85,12 +85,21 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
           Showing all {identities.length} {identities.length === 1 ? "identity" : "identities"}
         </p>
 
+        <p class="derive-nudge" id="derive-nudge" hidden>
+          Looking for a starting point rather than an exact fit? Any of these derives into your
+          palette, type, and density - <a href="/derive/">how deriving works</a>.
+        </p>
+
         <div class="identity-tiles" id="identity-grid">
           {identities.map((identity) => <IdentityTile {identity} />)}
         </div>
 
         <div class="empty-state" id="identity-empty" hidden>
-          <p>No identities match those filters.</p>
+          <p>
+            No identities match those filters - and the catalogue isn't a fixed menu. Pick the
+            nearest identity and <a href="/derive/">derive it</a> into your exact look: palette,
+            type, radius, density.
+          </p>
           <button type="button" class="btn btn-ghost" id="identity-clear">Clear filters</button>
         </div>
       </div>
@@ -214,6 +223,7 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
   const grid = document.getElementById("identity-grid");
   const empty = document.getElementById("identity-empty");
   const count = document.getElementById("identity-count");
+  const nudge = document.getElementById("derive-nudge");
   const search = document.getElementById("identity-search") as HTMLInputElement | null;
   const clear = document.getElementById("identity-clear");
   if (grid && empty && count && search) {
@@ -237,6 +247,7 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
       }
       count.textContent =
         shown === total ? `Showing all ${total} ${noun}` : `Showing ${shown} of ${total} ${noun}`;
+      if (nudge) nudge.hidden = shown === 0 || (state.lane === "all" && !state.tag && !state.q);
       empty.hidden = shown !== 0;
       laneBtns.forEach((b) => {
         const active = b.dataset.lane === state.lane;

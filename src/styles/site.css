@@ -916,6 +916,24 @@ a:hover {
   margin-bottom: 14px;
 }
 
+/* Shown only while a filter is active: the catalogue narrows, but every
+   match is a starting point, not a fixed menu. */
+.derive-nudge {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: -6px 0 14px;
+}
+
+.derive-nudge a {
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.derive-nudge a:hover {
+  color: var(--text);
+}
+
 /* Compact inventory tiles: scannable at 100+ scale. Detail stays on the
    identity page; the tile carries color, name, lane, and at most 2 tags. */
 .identity-tiles {
