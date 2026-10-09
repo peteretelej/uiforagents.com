@@ -17,7 +17,6 @@ const navLinks = [
   { href: "/#identities", label: "Identities", match: null },
   { href: "/#how", label: "Usage guide", match: null },
   { href: "/derive/", label: "Derive", match: "/derive", optional: true },
-  { href: "/launch/", label: "Launch", match: "/launch", optional: true },
   { href: "/about/", label: "About", match: "/about", optional: true },
 ];
 const isActive = (link) => link.match !== null && (path === link.match || path.startsWith(link.match));
@@ -102,7 +101,6 @@ const fontPreloads = themed ? identityPreloads(identityFonts(slug)) : sitePreloa
                   {link.slug}
                 </a>
               ))}
-              <a href="/launch/" class="text-muted-foreground transition-colors hover:text-foreground">launch post</a>
             </nav>
             <nav class="flex flex-col gap-2 text-sm" aria-label="Agents">
               <span class="font-semibold">Agents</span>
@@ -147,7 +145,6 @@ const fontPreloads = themed ? identityPreloads(identityFonts(slug)) : sitePreloa
             {identityLinks.map((link) => (
               <a href={link.href}>{link.slug}</a>
             ))}
-            <a href="/launch/">launch post</a>
           </nav>
           <nav class="group" aria-label="Agents">
             <span>Agents</span>

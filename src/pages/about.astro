@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { loadIdentities } from "../lib/identities.mjs";
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
 import "@fontsource/inter/latin-600.css";
@@ -8,6 +9,11 @@ import "@fontsource/plus-jakarta-sans/latin-600.css";
 import "@fontsource/plus-jakarta-sans/latin-700.css";
 import "@fontsource/plus-jakarta-sans/latin-800.css";
 import "../styles/site.css";
+
+const identities = loadIdentities();
+const identityLink = (id) => `<a href="/identities/${id.slug}/">${id.slug}</a>`;
+const identityLinks = (lane) => identities.filter((id) => id.lane === lane).map(identityLink).join(", ");
+const catalogueCount = `${identities.length} ${identities.length === 1 ? "identity" : "identities"}`;
 ---
 <Base title="About - uiforagents" description="From a vanilla UI kit to design identities for agent-built apps: the pivot, the licenses, and what ships next.">
   <div class="container">
@@ -49,10 +55,6 @@ import "../styles/site.css";
           only in git history, in
           the <a href="https://github.com/peteretelej/uiforagents">uiforagents</a> repo and this repo's history.
         </p>
-        <p>
-          New here? The <a href="/launch/">launch post</a> tells the pivot story and walks through
-          the agent workflow end to end.
-        </p>
 
         <h2 id="license">License</h2>
         <p>
@@ -64,16 +66,14 @@ import "../styles/site.css";
 
         <h2>Roadmap</h2>
         <p>
-          Shipped: <a href="/identities/ocean-calm/">ocean-calm</a>, <a href="/identities/nairobi-noon/">nairobi-noon</a>,
-          and <a href="/identities/graphite-terminal/">graphite-terminal</a>, all live in the catalogue
-          with their full block suites and prompt-packs - plus the pure-CSS artifact
-          identities <a href="/identities/reading-room/">reading-room</a> and <a href="/identities/midnight-bulletin/">midnight-bulletin</a>,
-          each shipping a foundation
-          stylesheet, prompt-pack, and live demo. Next: more identities across new moods and
-          surfaces, per-identity tuning-surface notes so derivation gets sharper with every
-          identity, and
-          tighter agent integration as the registry ecosystem grows. The shared five blocks stay the
-          foundation; identities continue the queued-card pattern on
+          Shipped: all {catalogueCount} in the catalogue - the shadcn/ui
+          kits <Fragment set:html={identityLinks("react")} />, and the pure-CSS artifact
+          identities <Fragment set:html={identityLinks("artifact")} /> - each with its theme or
+          foundation stylesheet, blocks, agent prompt-pack, and per-identity tuning-surface
+          notes. Derivation is a documented contract too: the <a href="/derive/">derive guide</a>
+          and every pack's tuning surface tell your agent exactly which knobs to retune. Next:
+          more identities across new moods and surfaces, and tighter agent integration as the
+          registry ecosystem grows. Identities continue the queued-card pattern on
           the <a href="/#identities">landing gallery</a>.
         </p>
       </div>
