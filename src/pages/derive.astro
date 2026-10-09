@@ -41,6 +41,11 @@ import "../styles/site.css";
           prompt-pack's decision logic and do/don'ts, and the lane contracts
           (<code>@layer</code>, <code>light-dark()</code>, no required JavaScript).
         </p>
+        <p>
+          Every identity's prompt-pack carries a <code>## Tuning surface</code> section: the
+          per-identity instance of this rule. Read it first - it names exactly which tokens
+          retune and what inherits for that parent.
+        </p>
 
         <h2 id="react-lane">React lane (shadcn/ui)</h2>
         <p>
@@ -69,11 +74,12 @@ import "../styles/site.css";
 
         <h2 id="gates">Gates before you ship</h2>
         <p>
-          Contrast at AA on body text and key pairs in <strong>both</strong> schemes. Renders
-          clean: zero console errors at desktop and ~390px widths. In the artifact lane, the page
-          must render completely with JavaScript disabled; run the print check if you claim print
-          support. And a one-shot check: an agent given only your retuned pack and stylesheet
-          builds identity-faithful pages with no improvisation.
+          Run every gate against the derived system, not the parent. Contrast AA on body text and
+          key pairs in <strong>both</strong> schemes. Headless check: zero console errors at ~1280px
+          and ~390px widths. In the artifact lane, the page must render completely with JavaScript
+          disabled; run the print check only if you claim print support. And a one-shot check: an
+          agent given only your retuned pack and stylesheet builds identity-faithful pages with no
+          improvisation.
         </p>
 
         <h2 id="promotion">Where derived systems live, and promotion</h2>
@@ -87,9 +93,9 @@ import "../styles/site.css";
         </p>
 
         <p class="note">
-          This guide is the factory contract v0. Per-identity tuning-surface notes are landing in
-          each identity's prompt-pack as identities ship them; until then, this page and the
-          parent's prompt-pack are the contract. The canonical copy lives in <a href="https://github.com/peteretelej/uiforagents/blob/main/DERIVE.md">DERIVE.md</a> in
+          This page mirrors the factory contract (v1). Every catalogue identity's prompt-pack
+          now ships its own tuning-surface section; this page, that section, and the parent's
+          prompt-pack are the contract. The canonical copy lives in <a href="https://github.com/peteretelej/uiforagents/blob/main/DERIVE.md">DERIVE.md</a> in
           the uiforagents repo.
         </p>
 

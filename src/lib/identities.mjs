@@ -48,6 +48,13 @@ export function isReactLane(slug) {
 // metadata here (single source). The spec fields and lead color scheme feed
 // the cards, the identity pages, and the publish script's llms.txt.
 const ARTIFACT_SPECS = {
+  "espresso-panel": {
+    title: "Espresso Panel",
+    description:
+      "Amber instrument panel on warm black - readout walls, dot-matrix fills, bracket states, ticker tape, one phosphor hue, all-mono type. A retro terminal instrument, not an ops dashboard; one pure-CSS stylesheet, both themes, no JavaScript.",
+    vibe: ["instrument", "retro-terminal", "dark"],
+    leadScheme: "dark",
+  },
   "reading-room": {
     title: "Reading Room",
     description:
@@ -61,6 +68,27 @@ const ARTIFACT_SPECS = {
       "Dark-first briefing bulletin for data-dense artifacts - status one-pagers, incident reports, lab writeups. Warm near-black ground, amber accent, serif display over sans body, mono labels.",
     vibe: ["briefing", "data-dense", "dark"],
     leadScheme: "dark",
+  },
+  "night-ops": {
+    title: "Night Ops",
+    description:
+      "Dark ops console for live dashboards - KPI strips, chart frames, log streams, health rows, LED state pills. Cool near-black ground, azure action accent, mono counts; one pure-CSS stylesheet, both themes, no JavaScript.",
+    vibe: ["ops", "data-dense", "dark"],
+    leadScheme: "dark",
+  },
+  "paper-ledger": {
+    title: "Paper Ledger",
+    description:
+      "Light print-precision analytics - statements, cost audits, ledgers. Cool paper ground, ink-blue accent, accounting double rules, tabular mono figures, print that survives grayscale; one pure-CSS stylesheet, both themes, no JavaScript.",
+    vibe: ["ledger", "print-precision", "light"],
+    leadScheme: "light",
+  },
+  "tally-board": {
+    title: "Tally Board",
+    description:
+      "Warm personal tracker for habits, budgets, and goals - bento cards, progress tracks, target ticks, rings, streak heat, ok/warn-only pills, friendly voice. Cream and terracotta, rounded numerals; one pure-CSS stylesheet, both themes, no JavaScript.",
+    vibe: ["tracker", "personal", "light"],
+    leadScheme: "light",
   },
 };
 

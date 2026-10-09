@@ -67,6 +67,9 @@ for (const identity of identities.filter((i) => i.lane === "artifact")) {
 }
 
 // 3c. Catalogue metadata: one static JSON the chrome seeds into IndexedDB.
+// derivedFrom is null for catalogue identities (they are minted, not
+// derived); a promoted derived system would name its parent here.
+// tuningSurface points at the pack section every identity ships.
 const metadata = identities.map(({ slug, lane, leadScheme, spec, palette }) => ({
   slug,
   title: spec.title,
@@ -75,6 +78,8 @@ const metadata = identities.map(({ slug, lane, leadScheme, spec, palette }) => (
   vibe: spec.vibe,
   leadScheme,
   accent: palette.primary,
+  derivedFrom: null,
+  tuningSurface: `/prompt-packs/${slug}.md#tuning-surface`,
 }));
 await writeFile(dist("identity-metadata.json"), JSON.stringify(metadata, null, 2) + "\n");
 
@@ -123,6 +128,7 @@ const llms = [
   ...identities.flatMap(({ slug, spec, lane }) => [
     `- [${spec.title}](${SITE_URL}/identities/${slug}/): ${spec.description}`,
     `  - Prompt-pack: ${SITE_URL}/prompt-packs/${slug}.md`,
+    `  - Tuning surface: ${SITE_URL}/prompt-packs/${slug}.md#tuning-surface`,
     ...(lane === "artifact"
       ? [
           `  - Foundation CSS: ${SITE_URL}/foundations/${slug}.css`,
