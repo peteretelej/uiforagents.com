@@ -49,6 +49,17 @@ const suiteCount = suitePrimitives.length + blockList.length;
 const pack = await getEntry("promptPacks", slug);
 const { Content: PromptPack } = await render(pack);
 
+// States gallery: interactive rows are live specimens - the same control row
+// rendered in each state, so the row itself demonstrates the state - and the
+// frozen row derives its controls from the same flag. Row count and copy
+// derive from this data; every React identity page inherits the section.
+const interactiveStates = [
+  { name: "Hover", hint: "point at one", frozen: false },
+  { name: "Focus", hint: "tab into one", frozen: false },
+  { name: "Active", hint: "press and hold", frozen: false },
+  { name: "Disabled", hint: "frozen, non-interactive", frozen: true },
+];
+
 // uiforagents-branded sample content, identical across identities. Blocks
 // with prop surfaces take their content from here.
 const brand = {
@@ -198,8 +209,77 @@ const stackRows = [
           </div>
         </div>
       </section>
-      
 
+      <section id="states-gallery" class="pt-14" aria-label="States gallery">
+        <p class="text-[12px] font-extrabold uppercase tracking-[0.16em] text-primary">The suite</p>
+        <h2 class="mt-2 font-display text-[26px] font-bold tracking-[-0.02em]">States, live</h2>
+        <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">
+          Every state the {countNoun(suitePrimitives.length, "shadcn primitive")} ship with, wearing this identity's
+          treatments. Hover, tab into, and press the live rows; the data states below are frozen.
+        </p>
+
+        <div class="mt-5 grid gap-4 md:grid-cols-2">
+          {interactiveStates.map((state) => (
+            <div class="rounded-[14px] border border-border bg-card p-6">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="font-display text-[16px] font-bold">{state.name}</h3>
+                <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{state.hint}</span>
+              </div>
+              <div class="mt-4 flex flex-wrap items-center gap-2.5">
+                <Button size="sm" disabled={state.frozen}>Continue</Button>
+                <Button size="sm" variant="outline" disabled={state.frozen}>Cancel</Button>
+                <a
+                  href="#states-gallery"
+                  class={`text-[13.5px] font-semibold text-primary underline underline-offset-4 ${state.frozen ? "pointer-events-none opacity-50" : ""}`}
+                >Read the guide</a>
+                <Input class="w-44" placeholder="you@agency.dev" aria-label={`${state.name} state input`} disabled={state.frozen} />
+                {state.frozen && <Badge variant="outline">Read-only</Badge>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-4 grid gap-4 md:grid-cols-3">
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[16px] font-bold">Empty</h3>
+              <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">nothing yet · offer the action</span>
+            </div>
+            <div class="py-8 text-center">
+              <p class="font-display text-[15px] font-bold">No builds yet</p>
+              <p class="mx-auto mt-1.5 max-w-[32ch] text-[13px] leading-relaxed text-muted-foreground">Runs land here the moment an agent ships with an identity.</p>
+              <Button size="sm" class="mt-4">Run a build</Button>
+            </div>
+          </div>
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[16px] font-bold">Loading</h3>
+              <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">skeleton rows · chrome stays put</span>
+            </div>
+            <div class="py-8">
+              <div class="space-y-3">
+                <div class="h-3 w-full animate-pulse rounded bg-secondary motion-reduce:animate-none" />
+                <div class="h-3 w-4/5 animate-pulse rounded bg-secondary motion-reduce:animate-none" />
+                <div class="h-3 w-3/5 animate-pulse rounded bg-secondary motion-reduce:animate-none" />
+              </div>
+              <p class="mt-4 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Fetching registry payload</p>
+            </div>
+          </div>
+          <div class="rounded-[14px] border border-border bg-card p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[16px] font-bold">Error</h3>
+              <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">say what failed · offer the retry</span>
+            </div>
+            <div class="py-8">
+              <p class="font-display text-[15px] font-bold text-destructive">Registry sync failed</p>
+              <p class="mt-1.5 font-mono text-[12px] text-muted-foreground">upstream_timeout · retry 2 of 3</p>
+              <Button size="sm" variant="outline" class="mt-4">Retry now</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
           </div>
 
         <section class="pt-14" aria-label="Blocks">
