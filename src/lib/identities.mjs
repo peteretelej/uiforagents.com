@@ -47,15 +47,16 @@ export function isReactLane(slug) {
 // Artifact identities ship no identity.json: the site owns their catalogue
 // metadata here (single source). The spec fields and lead color scheme feed
 // the cards, the identity pages, and the publish script's llms.txt.
-// Vibe tags are a controlled search vocabulary - a look, a feel, density, or
-// a use case (see the kit AGENTS.md rule). Reuse existing tags before coining
-// new ones; three or four per identity; never proper nouns or novelty words.
+// Vibe tags are a controlled search vocabulary - looks, feels, and use cases
+// a buyer would actually type (see the kit AGENTS.md rule). Lead use cases
+// with the common word (dashboard) and keep the specialty alongside it
+// (ops, monitoring, tracker); reuse before coining; up to five per identity.
 const ARTIFACT_SPECS = {
   "espresso-panel": {
     title: "Espresso Panel",
     description:
       "Amber instrument panel on warm black - readout walls, dot-matrix fills, bracket states, ticker tape, one phosphor hue, all-mono type. A retro terminal instrument, not an ops dashboard; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["dark", "retro", "terminal", "monitoring"],
+    vibe: ["dark", "terminal", "retro", "dashboard", "monitoring"],
     leadScheme: "dark",
   },
   "reading-room": {
@@ -69,14 +70,14 @@ const ARTIFACT_SPECS = {
     title: "Midnight Bulletin",
     description:
       "Dark-first briefing bulletin for data-dense artifacts - status one-pagers, incident reports, lab writeups. Warm near-black ground, amber accent, serif display over sans body, mono labels.",
-    vibe: ["briefing", "data-dense", "dark"],
+    vibe: ["dark", "data-dense", "dashboard", "briefing"],
     leadScheme: "dark",
   },
   "night-ops": {
     title: "Night Ops",
     description:
       "Dark ops console for live dashboards - KPI strips, chart frames, log streams, health rows, LED state pills. Cool near-black ground, azure action accent, mono counts; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["ops", "data-dense", "dark"],
+    vibe: ["dark", "data-dense", "dashboard", "ops"],
     leadScheme: "dark",
   },
   "paper-ledger": {
@@ -90,7 +91,7 @@ const ARTIFACT_SPECS = {
     title: "Tally Board",
     description:
       "Warm personal tracker for habits, budgets, and goals - bento cards, progress tracks, target ticks, rings, streak heat, ok/warn-only pills, friendly voice. Cream and terracotta, rounded numerals; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["light", "warm", "tracker"],
+    vibe: ["light", "warm", "dashboard", "tracker"],
     leadScheme: "light",
   },
 };
