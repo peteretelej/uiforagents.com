@@ -59,10 +59,11 @@ import "../styles/site.css";
         <p>
           Copy the parent's <code>foundation.css</code> and <code>prompt-pack.md</code>. Retune the
           token block - values only, keep every <code>light-dark()</code> pair ordered light-first.
-          Rename the component class prefix to your system's slug (mechanical find-and-replace,
-          pack included). Prune components you don't need; add new ones only by the pack's
-          conventions: namespaced, inside the <code>@layer foundation</code> block, documented.
-          Page CSS stays unlayered and wins without <code>!important</code>.
+          Rename the component class prefix to your system's slug - the parent pack's lane
+          mechanics mandate a two-letter namespace, keyframes included (mechanical
+          find-and-replace, pack included). Prune components you don't need; add new ones only by
+          the pack's conventions: namespaced, inside the <code>@layer foundation</code> block,
+          documented. Page CSS stays unlayered and wins without <code>!important</code>.
         </p>
 
         <h2 id="naming">Naming and provenance</h2>
@@ -75,7 +76,12 @@ import "../styles/site.css";
         <h2 id="gates">Gates before you ship</h2>
         <p>
           Run every gate against the derived system, not the parent. Contrast AA on body text and
-          key pairs in <strong>both</strong> schemes. Headless check: zero console errors at ~1280px
+          key pairs in <strong>both</strong> schemes - key pairs are the text-and-ground
+          combinations your pages actually ship: body, muted, and accent text on their grounds,
+          text on accent and state fills, state text on its own wash, chrome-band text. If a pair
+          fails on an inherited value the parent's tuning surface cannot retune, prune the
+          component (artifact lane) or report it - never retune outside the surface. Headless
+          check: zero console errors at ~1280px
           and ~390px widths. In the artifact lane, the page must render completely with JavaScript
           disabled; run the print check only if you claim print support. And a one-shot check: an
           agent given only your retuned pack and stylesheet builds identity-faithful pages with no
