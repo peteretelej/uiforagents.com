@@ -47,12 +47,15 @@ export function isReactLane(slug) {
 // Artifact identities ship no identity.json: the site owns their catalogue
 // metadata here (single source). The spec fields and lead color scheme feed
 // the cards, the identity pages, and the publish script's llms.txt.
+// Vibe tags are a controlled search vocabulary - a look, a feel, density, or
+// a use case (see the kit AGENTS.md rule). Reuse existing tags before coining
+// new ones; three or four per identity; never proper nouns or novelty words.
 const ARTIFACT_SPECS = {
   "espresso-panel": {
     title: "Espresso Panel",
     description:
       "Amber instrument panel on warm black - readout walls, dot-matrix fills, bracket states, ticker tape, one phosphor hue, all-mono type. A retro terminal instrument, not an ops dashboard; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["instrument", "retro-terminal", "dark"],
+    vibe: ["dark", "retro", "terminal", "monitoring"],
     leadScheme: "dark",
   },
   "reading-room": {
@@ -80,14 +83,14 @@ const ARTIFACT_SPECS = {
     title: "Paper Ledger",
     description:
       "Light print-precision analytics - statements, cost audits, ledgers. Cool paper ground, ink-blue accent, accounting double rules, tabular mono figures, print that survives grayscale; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["ledger", "print-precision", "light"],
+    vibe: ["light", "ledger", "print"],
     leadScheme: "light",
   },
   "tally-board": {
     title: "Tally Board",
     description:
       "Warm personal tracker for habits, budgets, and goals - bento cards, progress tracks, target ticks, rings, streak heat, ok/warn-only pills, friendly voice. Cream and terracotta, rounded numerals; one pure-CSS stylesheet, both themes, no JavaScript.",
-    vibe: ["tracker", "personal", "light"],
+    vibe: ["light", "warm", "tracker"],
     leadScheme: "light",
   },
 };
