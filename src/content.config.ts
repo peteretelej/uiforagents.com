@@ -1,6 +1,5 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
-import { fileURLToPath } from "node:url";
 import { identitiesRoot } from "./lib/identities.mjs";
 
 // Agent prompt-packs, read straight from the sibling identities repo
@@ -9,7 +8,10 @@ import { identitiesRoot } from "./lib/identities.mjs";
 const promptPacks = defineCollection({
   loader: glob({
     pattern: "*/prompt-pack.md",
-    base: fileURLToPath(new URL("identities/", identitiesRoot())),
+    // Absolute file URL, not a bare path: the loader resolves base with
+    // new URL(base, config.root), and a Windows path like D:\... parses
+    // "D:" as a URL scheme and dies in fileURLToPath.
+    base: new URL("identities/", identitiesRoot()).href,
     generateId: ({ entry }) => entry.split("/")[0],
   }),
 });
