@@ -14,6 +14,15 @@ import "../styles/site.css";
 const identities = loadIdentities();
 const lanes = [...new Set(identities.map((i) => i.lane))].sort();
 const tags = [...new Set(identities.flatMap((i) => i.spec.vibe))].sort();
+const tagCounts = new Map();
+for (const identity of identities)
+  for (const tag of identity.spec.vibe)
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+// Keep the chip row scannable as the catalogue grows: tags worn by 3+
+// identities stay visible, the long tail hides behind the "more filters"
+// expander.
+const commonTags = tags.filter((tag) => (tagCounts.get(tag) ?? 0) >= 3);
+const rareTags = tags.filter((tag) => (tagCounts.get(tag) ?? 0) < 3);
 const catalogueCount = `${identities.length} ${identities.length === 1 ? "identity" : "identities"}`;
 
 const installCmd = `npx shadcn add https://uiforagents.com/r/ocean-calm.json`;
@@ -75,9 +84,19 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
             </div>
           </div>
           <div class="tag-row" role="group" aria-label="Filter by vibe">
-            {tags.map((tag) => (
+            {commonTags.map((tag) => (
               <button type="button" class="tag-btn" data-tag={tag} aria-pressed="false">{tag}</button>
             ))}
+            <span class="tag-extra" id="tag-extra" hidden>
+              {rareTags.map((tag) => (
+                <button type="button" class="tag-btn" data-tag={tag} aria-pressed="false">{tag}</button>
+              ))}
+            </span>
+            {rareTags.length > 0 && (
+              <button type="button" class="tag-btn tag-more" id="tag-more" aria-expanded="false" aria-controls="tag-extra">
+                more filters ({rareTags.length})
+              </button>
+            )}
           </div>
         </div>
 
@@ -229,7 +248,9 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
   if (grid && empty && count && search) {
     const tiles = Array.from(grid.querySelectorAll<HTMLElement>(".identity-tile"));
     const laneBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".lane-btn"));
-    const tagBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".tag-btn"));
+    const tagBtns = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(".tag-btn:not(.tag-more)")
+    );
     const state = { q: "", lane: "all", tag: "" };
 
     const total = tiles.length;
@@ -297,5 +318,22 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
     state.tag = params.get("tag") ?? "";
     search.value = state.q;
     apply();
+
+    // A shareable ?tag= URL can name a tag that lives in the hidden group;
+    // expand so the active chip is visible.
+    const tagExtra = document.getElementById("tag-extra");
+    const tagMore = document.getElementById("tag-more");
+    const activeTagBtn = tagBtns.find((b) => b.dataset.tag === state.tag);
+    if (state.tag && activeTagBtn && tagExtra?.contains(activeTagBtn) && tagMore) {
+      tagExtra.hidden = false;
+      tagMore.setAttribute("aria-expanded", "true");
+    }
+
+    tagMore?.addEventListener("click", () => {
+      if (!tagExtra) return;
+      const willShow = tagExtra.hidden;
+      tagExtra.hidden = !willShow;
+      tagMore.setAttribute("aria-expanded", String(willShow));
+    });
   }
 </script>

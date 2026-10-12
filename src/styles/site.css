@@ -910,6 +910,20 @@ a:hover {
   background: color-mix(in oklab, var(--accent) 8%, var(--bg));
 }
 
+/* The single-identity tag tail hides here until "more filters" opens;
+   display:contents keeps its chips in the same wrap flow as the row. */
+.tag-extra {
+  display: contents;
+}
+
+.tag-extra[hidden] {
+  display: none;
+}
+
+.tag-more {
+  border-style: dashed;
+}
+
 .result-count {
   font-size: 13px;
   color: var(--text-muted);
