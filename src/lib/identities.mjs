@@ -94,6 +94,34 @@ const ARTIFACT_SPECS = {
     vibe: ["light", "warm", "dashboard", "tracker"],
     leadScheme: "light",
   },
+  "weissraum": {
+    title: "Weissraum",
+    description:
+      "Light Swiss portfolio system for studio sites, case studies, about pages, and one-page briefs. Paper-white canvas, near-black grotesk display at poster scale, hairline structure, uppercase mono micro-labels, one red accent that only appears when it has a job; one pure-CSS stylesheet, no JavaScript.",
+    vibe: ["light", "editorial", "portfolio", "minimal"],
+    leadScheme: "light",
+  },
+  "ivory-desk": {
+    title: "Ivory Desk",
+    description:
+      "Calm light AI console for assistant workspaces, research answers, briefs, and AI product pages. Warm oat-ivory paper, a serif that speaks and a grotesk that works, IBM Plex Mono for everything the machine produced, one clay accent, the full model machinery: composer, stream, tool cards, citations, meters; one pure-CSS stylesheet, light-only.",
+    vibe: ["light", "calm", "technical", "briefing"],
+    leadScheme: "light",
+  },
+  "dither-lab": {
+    title: "Dither Lab",
+    description:
+      "Dark 1-bit pixel workshop for creative-tool pages, dev-tool landings, release-note zines, and event pages. Blue-black canvas, four-color rotational bit-palette, bitmap display type, dithered checker fills, stepped motion; retro-computing craft with none of the web3 neon; one pure-CSS stylesheet, dark-only.",
+    vibe: ["dark", "retro", "technical", "landing"],
+    leadScheme: "dark",
+  },
+  "city-edition": {
+    title: "City Edition",
+    description:
+      "Dense morning daily for front pages, section fronts, article pages, digests, and press announcements. Flat newsprint, ink serif headlines, kicker-deck-byline stack on every story card, hairline rules with heavy masthead rules, a rationed press-red signal, agate mono for datelines and indexes; one pure-CSS stylesheet, light-only.",
+    vibe: ["light", "editorial", "print", "long-form"],
+    leadScheme: "light",
+  },
 };
 
 // Lane policy: an artifact foundation must pin its lead scheme (:root
