@@ -30,7 +30,9 @@ const {
   Hero,
   AuthCard,
   DashboardShell,
+  LandingShell,
   TablePage,
+  ActivityLog,
   Article,
 } = getBlocks(slug);
 
@@ -118,13 +120,63 @@ const installNote =
     ? "Verified behavior: this payload declares no registry dependencies - it adds the theme, blocks, and prompt-pack only. If your project lacks the stock primitives, add them first: npx shadcn add button card badge input label."
     : "Verified behavior: this also installs the stock shadcn primitives (button, card, badge, input, label) from the default registry, then adds the theme, blocks, and prompt-pack under src/identities/" + slug + "/.";
 
-const blockNotes = {
-  hero: "Marketing landing section",
-  auth: "Sign-in and sign-up surface",
-  "dashboard-shell": "Topbar + stats app frame",
-  "table-page": "Data table with filters and row states",
-  article: "Long-form reading layout",
+// The blocks section renders the identity's declared block list (identity.json
+// is the source of record) in declared order; "states" has its own live
+// gallery above. One record per block: demo note, frame classes, component.
+// An unregistered name or a declared-but-missing export is a build error, so
+// a new block must be registered here deliberately instead of crashing the
+// page or silently rendering nothing.
+const blockSuite = {
+  hero: {
+    note: "Marketing landing section",
+    frame: "mt-3 mx-6 max-w-[1120px] rounded-[14px] border border-border bg-card overflow-hidden xl:mx-auto",
+    Component: Hero,
+  },
+  auth: {
+    note: "Sign-in and sign-up surface",
+    frame: "mt-3 mx-6 flex max-w-[1120px] justify-center rounded-[14px] border border-border bg-card px-6 py-8 xl:mx-auto",
+    Component: AuthCard,
+  },
+  "dashboard-shell": {
+    note: "Topbar + stats app frame",
+    frame: "mt-3 border-y border-border bg-card overflow-x-auto",
+    Component: DashboardShell,
+  },
+  "landing-shell": {
+    note: "Landing header + section stack app frame",
+    frame: "mt-3 border-y border-border bg-card",
+    Component: LandingShell,
+  },
+  "table-page": {
+    note: "Data table with filters and row states",
+    frame: "mt-3 border-y border-border bg-card overflow-x-auto",
+    Component: TablePage,
+  },
+  "activity-log": {
+    note: "Activity feed with loading, empty, and error states",
+    frame: "mt-3 mx-6 max-w-[1120px] xl:mx-auto",
+    Component: ActivityLog,
+  },
+  article: {
+    note: "Long-form reading layout",
+    frame: "mt-3 mx-6 max-w-[1120px] rounded-[14px] border border-border bg-card xl:mx-auto",
+    Component: Article,
+  },
 };
+const unknownBlocks = blockList.filter((name) => !Object.hasOwn(blockSuite, name) && name !== "states");
+const missingComponents = Object.keys(blockSuite).filter(
+  (name) => !blockSuite[name].Component && blockList.includes(name)
+);
+if (unknownBlocks.length > 0 || missingComponents.length > 0) {
+  throw new Error(
+    `Identity "${slug}": blocks not in the page registry: [${unknownBlocks.join(", ")}]; declared but missing from its block exports: [${missingComponents.join(", ")}]. Extend the block registry in src/pages/identities/[name].astro or fix the identity's blocks.`
+  );
+}
+// TablePage demo content: the ocean-family table grammar takes the shared
+// catalogue props; the other identities' tables carry their own designed
+// sample content and render from defaults.
+const catalogueTableSlugs = new Set(["ocean-calm", "nairobi-noon", "graphite-terminal"]);
+const renderedBlocks = blockList.filter((name) => name !== "states");
 
 const tested = spec.stack?.tested ?? {};
 const stackRows = [
@@ -289,110 +341,105 @@ const stackRows = [
         <p class="mt-1.5 max-w-[62ch] text-[15px] text-muted-foreground">The {countNoun(blockList.length, "block")} every install ships, server-rendered in this identity with uiforagents content.</p>
       </div>
 
-      <div class="mx-auto max-w-[1120px] px-6 pt-8">
-        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · hero</p>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.hero}</p>
-      </div>
-      <!-- Block demos carry their own internal gutters (px-6); the frame adds
-           none, so content aligns identically at every breakpoint. -->
-      <div class="mt-3 rounded-[14px] border border-border bg-card mx-auto max-w-[1120px] overflow-hidden">
-        <Hero
-          eyebrow={brand.eyebrow}
-          title={brand.title}
-          accent={brand.accent}
-          description={brand.description}
-          primaryCta={brand.primaryCta}
-          secondaryCta={brand.secondaryCta}
-          stats={brand.stats}
-        />
-      </div>
-
-      <div class="mx-auto max-w-[1120px] px-6 pt-8">
-        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · auth</p>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.auth}</p>
-        <div class="mt-3 flex justify-center rounded-[14px] border border-border bg-card px-6 py-8">
-          <AuthCard
-            title="Sign in to uiforagents"
-            description="Agent-built apps deserve agent-grade design."
-            primaryCta="Sign in"
-          />
+      {/* Block demos render from the identity's declared block list in
+           identity.json order; demos carry their own internal gutters, the
+           frame adds none, so content aligns identically at every
+           breakpoint. */}
+      {renderedBlocks.map((name) => (
+        <div class="pt-8">
+          <div class="mx-auto max-w-[1120px] px-6">
+            <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · {name}</p>
+            <p class="mt-0.5 text-[13px] text-muted-foreground">{blockSuite[name].note}</p>
+          </div>
+          <div class={blockSuite[name].frame}>
+            {name === "hero" && (
+              <Hero
+                eyebrow={brand.eyebrow}
+                title={brand.title}
+                accent={brand.accent}
+                description={brand.description}
+                primaryCta={brand.primaryCta}
+                secondaryCta={brand.secondaryCta}
+                stats={brand.stats}
+              />
+            )}
+            {name === "auth" && (
+              <AuthCard
+                title="Sign in to uiforagents"
+                description="Agent-built apps deserve agent-grade design."
+                primaryCta="Sign in"
+              />
+            )}
+            {name === "dashboard-shell" && (
+              <DashboardShell title="uiforagents" nav={shellNav} stats={brand.stats}>
+                <div class="grid gap-4 lg:grid-cols-3">
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
+                    <CardDescription className="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
+                  </Card>
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Blocks included</CardTitle>
+                    <CardDescription className="mt-1.5">{countNoun(blockList.length, "composed section")}, content adapted per project.</CardDescription>
+                  </Card>
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
+                    <CardDescription className="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
+                  </Card>
+                </div>
+              </DashboardShell>
+            )}
+            {name === "landing-shell" && (
+              <LandingShell brand="uiforagents" nav={shellNav} cta={brand.primaryCta}>
+                <div class="grid gap-4 py-10 lg:grid-cols-3">
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
+                    <CardDescription className="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
+                  </Card>
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Blocks included</CardTitle>
+                    <CardDescription className="mt-1.5">{countNoun(blockList.length, "composed section")}, content adapted per project.</CardDescription>
+                  </Card>
+                  <Card className="rounded-xl px-5 py-4">
+                    <CardTitle className="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
+                    <CardDescription className="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
+                  </Card>
+                </div>
+              </LandingShell>
+            )}
+            {name === "table-page" &&
+              (catalogueTableSlugs.has(slug) ? (
+                <TablePage
+                  title="uiforagents"
+                  nav={catalogueNav}
+                  stats={brand.stats}
+                  heading="Catalogue"
+                  columns={catalogueColumns}
+                  rows={slug === "graphite-terminal" ? catalogueServices : catalogueJobs}
+                />
+              ) : (
+                <TablePage />
+              ))}
+            {name === "activity-log" && <ActivityLog />}
+            {name === "article" && (
+              <Article
+                eyebrow="Guide"
+                title="Ship an agent-built app with an identity"
+                meta="uiforagents guide · updated October 2026"
+              >
+                <p>An identity is a complete design system: tokens, component treatments, blocks, and the prompt-pack your agent follows. Installation is one command; from there the design decisions are already made.</p>
+                <h2>Three steps</h2>
+                <ul>
+                  <li>Pick an identity and install it by URL with the shadcn CLI.</li>
+                  <li>Import the theme after Tailwind and set <strong>data-identity</strong> on your root element.</li>
+                  <li>Attach the prompt-pack to every agent building UI - it is the binding contract.</li>
+                </ul>
+                <blockquote>Brand happens via tokens and overrides, never per-project restyling.</blockquote>
+                <p>Start from the blocks, adapt the content, and ship. The suite on this page is everything the identity installs.</p>
+              </Article>
+            )}
+          </div>
         </div>
-      </div>
-
-      <div class="pt-8">
-        <div class="mx-auto max-w-[1120px] px-6">
-          <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · dashboard-shell</p>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["dashboard-shell"]}</p>
-        </div>
-        <div class="mt-3 border-y border-border bg-card overflow-x-auto">
-          <DashboardShell title="uiforagents" nav={shellNav} stats={brand.stats}>
-            <div class="grid gap-4 lg:grid-cols-3">
-              <Card className="rounded-xl px-5 py-4">
-                <CardTitle className="font-display text-[16px] font-bold">Prompt-pack driven</CardTitle>
-                <CardDescription className="mt-1.5">Every identity ships the agent contract alongside the theme.</CardDescription>
-              </Card>
-              <Card className="rounded-xl px-5 py-4">
-                <CardTitle className="font-display text-[16px] font-bold">Blocks included</CardTitle>
-                <CardDescription className="mt-1.5">{countNoun(blockList.length, "composed section")}, content adapted per project.</CardDescription>
-              </Card>
-              <Card className="rounded-xl px-5 py-4">
-                <CardTitle className="font-display text-[16px] font-bold">Tokens, not forks</CardTitle>
-                <CardDescription className="mt-1.5">Brand happens via tokens and overrides - never per-project restyles.</CardDescription>
-              </Card>
-            </div>
-          </DashboardShell>
-        </div>
-      </div>
-
-      <div class="pt-8">
-        <div class="mx-auto max-w-[1120px] px-6">
-          <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · table-page</p>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes["table-page"]}</p>
-        </div>
-        <div class="mt-3 border-y border-border bg-card overflow-x-auto">
-          {slug === "graphite-terminal" ? (
-            <TablePage
-              title="uiforagents"
-              nav={catalogueNav}
-              stats={brand.stats}
-              heading="Catalogue"
-              columns={catalogueColumns}
-              rows={catalogueServices}
-            />
-          ) : (
-            <TablePage
-              title="uiforagents"
-              nav={catalogueNav}
-              stats={brand.stats}
-              heading="Catalogue"
-              columns={catalogueColumns}
-              rows={catalogueJobs}
-            />
-          )}
-        </div>
-      </div>
-
-      <div class="mx-auto max-w-[1120px] px-6 pt-8">
-        <p class="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">block · article</p>
-        <p class="mt-0.5 text-[13px] text-muted-foreground">{blockNotes.article}</p>
-        <div class="mt-3 rounded-[14px] border border-border bg-card">
-          <Article
-            eyebrow="Guide"
-            title="Ship an agent-built app with an identity"
-            meta="uiforagents guide · updated October 2026"
-          >
-            <p>An identity is a complete design system: tokens, component treatments, blocks, and the prompt-pack your agent follows. Installation is one command; from there the design decisions are already made.</p>
-            <h2>Three steps</h2>
-            <ul>
-              <li>Pick an identity and install it by URL with the shadcn CLI.</li>
-              <li>Import the theme after Tailwind and set <strong>data-identity</strong> on your root element.</li>
-              <li>Attach the prompt-pack to every agent building UI - it is the binding contract.</li>
-            </ul>
-            <blockquote>Brand happens via tokens and overrides, never per-project restyling.</blockquote>
-            <p>Start from the blocks, adapt the content, and ship. The suite on this page is everything the identity installs.</p>
-          </Article>
-        </div>
-      </div>
+      ))}
     </section>
     
 
