@@ -213,6 +213,42 @@ export function loadIdentity(slug) {
   };
 }
 
+// Curated catalogue order, strongest and most broadly useful first: the
+// homepage grid, llms.txt, identity-metadata.json, and the demo chrome's
+// prev/next all read loadIdentities(). Presentation lives here, not in
+// identity.json (artifact lane has none). Must name every directory exactly
+// once - the build fails on drift so a new identity can't ship unranked.
+const CATALOGUE_ORDER = [
+  "ocean-calm",
+  "night-ops",
+  "paper-ledger",
+  "midnight-bulletin",
+  "reading-room",
+  "graphite-terminal",
+  "ivory-desk",
+  "tally-board",
+  "weissraum",
+  "portico-row",
+  "frost-field",
+  "espresso-panel",
+  "nairobi-noon",
+  "sticker-press",
+  "dither-lab",
+  "cobalt-quorum",
+  "city-edition",
+];
+
 export function loadIdentities() {
-  return listIdentities().map(loadIdentity);
+  const slugs = listIdentities();
+  const missing = slugs.filter((slug) => !CATALOGUE_ORDER.includes(slug));
+  const unknown = CATALOGUE_ORDER.filter((slug) => !slugs.includes(slug));
+  const dupes = CATALOGUE_ORDER.filter((slug, i) => CATALOGUE_ORDER.indexOf(slug) !== i);
+  if (missing.length > 0 || unknown.length > 0 || dupes.length > 0) {
+    const parts = [];
+    if (missing.length > 0) parts.push(`missing from the list: ${missing.join(", ")}`);
+    if (unknown.length > 0) parts.push(`not on disk: ${unknown.join(", ")}`);
+    if (dupes.length > 0) parts.push(`listed more than once: ${dupes.join(", ")}`);
+    throw new Error(`CATALOGUE_ORDER in src/lib/identities.mjs is stale (${parts.join("; ")})`);
+  }
+  return CATALOGUE_ORDER.map(loadIdentity);
 }

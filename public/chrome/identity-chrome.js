@@ -154,6 +154,13 @@
     return res.json();
   }
 
+  // Catalogue order (curated, strongest first) is part of the metadata's
+  // array position: records carry it explicitly because IndexedDB reads
+  // come back key-ordered, and a cached copy re-seeds when the sequence
+  // changes, not just when the slug set does.
+  const withOrder = (list) => list.map((r, i) => ({ ...r, order: i }));
+  const sequence = (list) => list.map((r) => `${r.slug}:${r.order}`).join();
+
   // Identities for retrieval: IndexedDB first (instant), then revalidate
   // from the static JSON in the background so updates propagate without
   // ever blocking the palette on the network.
@@ -163,17 +170,20 @@
     if (records && records.length > 0) {
       fetchMetadata()
         .then((fresh) => {
-          const slugs = (list) => list.map((r) => r.slug).sort().join();
-          if (fresh.length !== records.length || slugs(fresh) !== slugs(records)) {
+          fresh = withOrder(fresh);
+          if (
+            fresh.length !== records.length ||
+            sequence(fresh) !== sequence(records)
+          ) {
             return idbPutAll(db, fresh);
           }
         })
         .catch(() => {});
-      return records.sort((a, b) => a.title.localeCompare(b.title));
+      return records.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     }
-    records = await fetchMetadata();
+    records = withOrder(await fetchMetadata());
     await idbPutAll(db, records);
-    return records.slice().sort((a, b) => a.title.localeCompare(b.title));
+    return records;
   })();
 
   // --- Prev / next ------------------------------------------------------

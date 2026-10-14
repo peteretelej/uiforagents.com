@@ -854,7 +854,8 @@ a:hover {
   outline-offset: 0;
 }
 
-.lane-toggle {
+.lane-toggle,
+.sort-toggle {
   display: inline-flex;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -863,7 +864,8 @@ a:hover {
   background: var(--bg);
 }
 
-.lane-btn {
+.lane-btn,
+.sort-btn {
   border: 0;
   background: transparent;
   color: var(--text-muted);
@@ -876,7 +878,8 @@ a:hover {
   cursor: pointer;
 }
 
-.lane-btn.is-active {
+.lane-btn.is-active,
+.sort-btn.is-active {
   background: var(--accent);
   color: oklch(100% 0 0);
 }

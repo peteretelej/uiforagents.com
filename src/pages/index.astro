@@ -82,6 +82,11 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
                 <button type="button" class="lane-btn" data-lane={lane} aria-pressed="false">{lane}</button>
               ))}
             </div>
+            <div class="sort-toggle" role="group" aria-label="Sort identities">
+              <button type="button" class="sort-btn is-active" data-sort="featured" aria-pressed="true">Featured</button>
+              <button type="button" class="sort-btn" data-sort="az" aria-pressed="false">A-Z</button>
+              <button type="button" class="sort-btn" data-sort="za" aria-pressed="false">Z-A</button>
+            </div>
           </div>
           <div class="tag-row" role="group" aria-label="Filter by vibe">
             {commonTags.map((tag) => (
@@ -237,8 +242,10 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
 </Base>
 
 <script>
-  // Client-side catalogue filtering. State lives in the URL (q, lane, tag) so
-  // filtered views are shareable; the DOM is fully rendered at build time.
+  // Client-side catalogue filtering and sorting. State lives in the URL
+  // (q, lane, tag, sort) so filtered views are shareable; the DOM is fully
+  // rendered at build time in curated order, and sorts reorder tiles via
+  // CSS `order` instead of moving nodes.
   const grid = document.getElementById("identity-grid");
   const empty = document.getElementById("identity-empty");
   const count = document.getElementById("identity-count");
@@ -251,10 +258,20 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
     const tagBtns = Array.from(
       document.querySelectorAll<HTMLButtonElement>(".tag-btn:not(.tag-more)")
     );
-    const state = { q: "", lane: "all", tag: "" };
+    const sortBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".sort-btn"));
+    const state = { q: "", lane: "all", tag: "", sort: "featured" };
 
     const total = tiles.length;
     const noun = total === 1 ? "identity" : "identities";
+
+    // Name ranks for the A-Z / Z-A sorts; the build order is the featured
+    // order, so only these two need a rank table.
+    const nameOf = (tile: HTMLElement) =>
+      (tile.querySelector(".tile-name")?.textContent ?? "").trim().toLowerCase();
+    const nameRank = new Map<HTMLElement, number>();
+    [...tiles]
+      .sort((a, b) => nameOf(a).localeCompare(nameOf(b)))
+      .forEach((tile, index) => nameRank.set(tile, index));
 
     function apply() {
       let shown = 0;
@@ -265,6 +282,15 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
         const show = matchLane && matchTag && matchQ;
         tile.hidden = !show;
         if (show) shown++;
+      }
+      if (state.sort === "featured") {
+        for (const tile of tiles) tile.style.removeProperty("order");
+      } else {
+        const flip = state.sort === "za";
+        for (const tile of tiles) {
+          const rank = nameRank.get(tile) ?? 0;
+          tile.style.order = String(flip ? total - 1 - rank : rank);
+        }
       }
       count.textContent =
         shown === total ? `Showing all ${total} ${noun}` : `Showing ${shown} of ${total} ${noun}`;
@@ -280,10 +306,16 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
         b.classList.toggle("is-active", active);
         b.setAttribute("aria-pressed", String(active));
       });
+      sortBtns.forEach((b) => {
+        const active = b.dataset.sort === state.sort;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
       const params = new URLSearchParams();
       if (state.q) params.set("q", state.q);
       if (state.lane !== "all") params.set("lane", state.lane);
       if (state.tag) params.set("tag", state.tag);
+      if (state.sort !== "featured") params.set("sort", state.sort);
       const qs = params.toString();
       history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
     }
@@ -304,6 +336,12 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
         apply();
       })
     );
+    sortBtns.forEach((b) =>
+      b.addEventListener("click", () => {
+        state.sort = b.dataset.sort ?? "featured";
+        apply();
+      })
+    );
     clear?.addEventListener("click", () => {
       state.q = "";
       state.lane = "all";
@@ -316,6 +354,8 @@ const rootExample = `<html data-identity="ocean-calm"> <!-- overrides key on it;
     state.q = (params.get("q") ?? "").toLowerCase();
     state.lane = params.get("lane") ?? "all";
     state.tag = params.get("tag") ?? "";
+    const sortParam = params.get("sort");
+    state.sort = sortParam === "az" || sortParam === "za" ? sortParam : "featured";
     search.value = state.q;
     apply();
 
