@@ -73,6 +73,13 @@ const ARTIFACT_SPECS = {
     vibe: ["dark", "data-dense", "dashboard", "briefing"],
     leadScheme: "dark",
   },
+  "listening-room": {
+    title: "Listening Room",
+    description:
+      "Dark-first listening surface for spoken-audio artifacts - podcast episodes, narrated reports, briefings with a voice. Warm near-black ground, amber action accent, Charter-led serif prose, waveform scrubber, synced transcript and chapter grid; one pure-CSS stylesheet, both themes, sanctioned player module.",
+    vibe: ["dark", "audio", "podcast", "narration", "transcript"],
+    leadScheme: "dark",
+  },
   "night-ops": {
     title: "Night Ops",
     description:
@@ -223,6 +230,7 @@ const CATALOGUE_ORDER = [
   "night-ops",
   "paper-ledger",
   "midnight-bulletin",
+  "listening-room",
   "reading-room",
   "graphite-terminal",
   "ivory-desk",
