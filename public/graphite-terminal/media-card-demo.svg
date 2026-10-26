@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-label="Deploy latency chart export in the graphite-terminal identity: dark graphite ground, mono labels, electric lime line">
+  <rect width="1120" height="560" fill="#0f1115"/>
+  <g stroke="#232733" stroke-width="1">
+    <path d="M80 80H1040M80 180H1040M80 280H1040M80 380H1040M80 480H1040"/>
+    <path d="M80 80V480M320 80V480M560 80V480M800 80V480M1040 80V480"/>
+  </g>
+  <text x="80" y="52" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="20" font-weight="600" letter-spacing="2" fill="#8b93a3">DEPLOY LATENCY · 24H</text>
+  <text x="1040" y="52" text-anchor="end" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="18" fill="#626b7d">SVC-01</text>
+  <path d="M80 400 L180 380 L280 392 L380 340 L480 356 L580 300 L680 316 L780 250 L880 268 L980 200 L1040 184" fill="none" stroke="#a3e635" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#a3e635">
+    <circle cx="480" cy="356" r="5"/><circle cx="880" cy="268" r="5"/><circle cx="1040" cy="184" r="5"/>
+  </g>
+  <g font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="16" fill="#626b7d">
+    <text x="80" y="516">00:00</text>
+    <text x="524" y="516">12:00</text>
+    <text x="984" y="516">23:00</text>
+    <text x="1040" y="168" text-anchor="end" fill="#a3e635">42ms</text>
+  </g>
+</svg>

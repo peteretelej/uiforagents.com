@@ -34,6 +34,7 @@ const {
   TablePage,
   ActivityLog,
   Article,
+  MediaCard,
 } = getBlocks(slug);
 
 // Counts and claims on this page derive from data - the catalogue loaders
@@ -161,6 +162,11 @@ const blockSuite = {
     note: "Long-form reading layout",
     frame: "mt-3 mx-6 max-w-[1120px] rounded-[14px] border border-border bg-card xl:mx-auto",
     Component: Article,
+  },
+  "media-card": {
+    note: "Share cards, screenshots, and chart exports",
+    frame: "mt-3 mx-6 max-w-[1120px] rounded-[14px] border border-border bg-card p-6 xl:mx-auto",
+    Component: MediaCard,
   },
 };
 const unknownBlocks = blockList.filter((name) => !Object.hasOwn(blockSuite, name) && name !== "states");
@@ -420,6 +426,16 @@ const stackRows = [
                 <TablePage />
               ))}
             {name === "activity-log" && <ActivityLog />}
+            {name === "media-card" && (
+              <MediaCard
+                src="/graphite-terminal/media-card-demo.svg"
+                alt="Deploy latency chart export: dark graphite ground, mono labels, lime line falling to 42ms"
+                caption="share card · chart export"
+                meta="svc-01 · 24h · 42ms p99"
+                width={1120}
+                height={560}
+              />
+            )}
             {name === "article" && (
               <Article
                 eyebrow="Guide"
